@@ -58,7 +58,7 @@ namespace TrueSync {
                     tsCollider.Body.TSPosition = _position + scaledCenter;
                 }
 
-                UpdateChildPosition();
+                UpdateChildTransform();
             }
         }
 
@@ -107,24 +107,25 @@ namespace TrueSync {
                     tsCollider.Body.TSOrientation = TSMatrix.CreateFromQuaternion(_rotation);
                 }
 
-                UpdateChildRotation();
+                UpdateChildTransform();
             }
         }
 
         [SerializeField]
         [HideInInspector]
         [AddTracking]
-        private TSVector _scale;
+        private TSVector _lossyScale;
 
         /**
         *  @brief Property access to scale. 
         **/
-        public TSVector scale {
+        public TSVector scale
+        {
             get {
-                return _scale;
+                return _lossyScale;
             }
             set {
-                _scale = value;
+                _lossyScale = value;
             }
         }
 
@@ -325,7 +326,7 @@ namespace TrueSync {
         **/
         public TSVector forward {
             get {
-                return TSVector.Transform(TSVector.forward, TSMatrix.CreateFromQuaternion(rotation));
+                return rotation * TSVector.forward;
             }
         }
 
@@ -334,7 +335,7 @@ namespace TrueSync {
         **/
         public TSVector right {
             get {
-                return TSVector.Transform(TSVector.right, TSMatrix.CreateFromQuaternion(rotation));
+                return rotation * TSVector.right;
             }
         }
 
@@ -343,7 +344,7 @@ namespace TrueSync {
         **/
         public TSVector up {
             get {
-                return TSVector.Transform(TSVector.up, TSMatrix.CreateFromQuaternion(rotation));
+                return rotation * TSVector.up;
             }
         }
 
@@ -539,7 +540,7 @@ namespace TrueSync {
             if (transform.hasChanged) {
                 _position = transform.position.ToTSVector();
                 _rotation = transform.rotation.ToTSQuaternion();
-                _scale = transform.lossyScale.ToTSVector();
+                _lossyScale = transform.lossyScale.ToTSVector();
 
                 _localPosition = transform.localPosition.ToTSVector();
                 _localRotation = transform.localRotation.ToTSQuaternion();
@@ -551,17 +552,18 @@ namespace TrueSync {
 
         private void UpdatePlayMode() {
 
-            if (tsParent != null)
-            {
-                _localPosition = tsParent.InverseTransformPoint(position);
-                TSMatrix matrix = TSMatrix.CreateFromQuaternion(tsParent.rotation);
-                _localRotation = TSQuaternion.CreateFromMatrix(TSMatrix.Inverse(matrix)) * rotation;
-            }
-            else
-            {
-                _localPosition = position;
-                _localRotation = rotation;
-            }
+            //if (tsParent != null)
+            //{
+            //    _localPosition = tsParent.InverseTransformPoint(position);
+            //    TSMatrix matrix = TSMatrix.CreateFromQuaternion(tsParent.rotation);
+            //    _localRotation = TSQuaternion.CreateFromMatrix(TSMatrix.Inverse(matrix)) * rotation;
+            //    Quaternion localRot = transform.localRotation;
+            //}
+            //else
+            //{
+            //    _localPosition = position;
+            //    _localRotation = rotation;
+            //}
 
             if (rb != null) {
                 if (rb.interpolation == TSRigidBody.InterpolateMode.Interpolate) {
@@ -579,22 +581,22 @@ namespace TrueSync {
 
             transform.position = position.ToVector();
             transform.rotation = rotation.ToQuaternion();
+            transform.localPosition = localPosition.ToVector();
+            transform.localRotation = localRotation.ToQuaternion();
             transform.localScale = localScale.ToVector();
-            _scale = transform.lossyScale.ToTSVector();
+            _lossyScale = transform.lossyScale.ToTSVector();
         }
 
-        private void UpdateChildPosition() {           
-            foreach (TSTransform child in tsChildren) {
-                child.Translate(_position - _prevPosition);
+        private void UpdateChildTransform()
+        {
+            if (tsParent == null) {
+                _localPosition = _position;
+                _localRotation = _rotation;
             }
-        }
 
-        private void UpdateChildRotation() {
-            TSMatrix matrix = TSMatrix.CreateFromQuaternion(_rotation);
             foreach (TSTransform child in tsChildren) {
-                child.localRotation = TSQuaternion.CreateFromMatrix(TSMatrix.Inverse(matrix)) * _rotation;
-                child.localPosition = TSVector.Transform(child.localPosition, TSMatrix.CreateFromQuaternion(child.localRotation));
                 child.position = TransformPoint(child.localPosition);
+                child.rotation = _rotation * child.localRotation;
             }
         }
     }

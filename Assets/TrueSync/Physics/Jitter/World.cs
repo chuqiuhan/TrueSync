@@ -792,6 +792,14 @@ namespace TrueSync.Physics3D
                         TSVector.Multiply(ref body.torque, timestep, out temp);
                         TSVector.Transform(ref temp, ref body.invInertiaWorld, out temp);
                         TSVector.Add(ref temp, ref body.angularVelocity, out body.angularVelocity);
+
+                        //clamp angular velocity to 0.5pi .
+                        FP maxAngVel = TSMath.PiOver2;
+                        FP angvel = body.angularVelocity.magnitude;
+                        if (angvel * timestep > maxAngVel)
+                        {
+                            body.angularVelocity *= (maxAngVel / timestep) / angvel;
+                        }
                     }
 
                     if (body.affectedByGravity)

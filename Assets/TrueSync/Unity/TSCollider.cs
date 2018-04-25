@@ -139,7 +139,7 @@ namespace TrueSync {
             tsRigidBody = this.GetComponent<TSRigidBody>();
 
             if (lossyScale == TSVector.one) {
-                lossyScale = TSVector.Abs(transform.localScale.ToTSVector());
+                lossyScale = TSVector.Abs(transform.lossyScale.ToTSVector());
             }
         }
 

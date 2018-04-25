@@ -312,7 +312,7 @@ namespace TrueSync.Physics3D {
             addCounter++;
         }
 
-        public Stack<OverlapPair> depricated = new Stack<OverlapPair>();
+        public Stack<OverlapPair> deprecated = new Stack<OverlapPair>();
         public override bool RemoveEntity(IBroadphaseEntity body)
         {
             int count;
@@ -329,8 +329,8 @@ namespace TrueSync.Physics3D {
             for (int i = 0; i < axis3.Count; i++)
             { if (axis3[i].Body == body) { count++; axis3.RemoveAt(i); if (count == 2) break; i--; } }
 
-            foreach (var pair in fullOverlaps) if (pair.Entity1 == body || pair.Entity2 == body) depricated.Push(pair);
-            while (depricated.Count > 0) fullOverlaps.Remove(depricated.Pop());
+            foreach (var pair in fullOverlaps) if (pair.Entity1 == body || pair.Entity2 == body) deprecated.Push(pair);
+            while (deprecated.Count > 0) fullOverlaps.Remove(deprecated.Pop());
 
             bodyList.Remove(body);
 
@@ -401,7 +401,7 @@ namespace TrueSync.Physics3D {
         // it also gives the hits in order but the startposition problem
         // is unsolved - so it starts from outside the broadphase.
 
-        #region Depricated
+        #region Deprecated 
         //public void QueryRay(HashSet<IBroadphaseEntity> entities,JVector rayOrigin, JVector rayDirection)
         //{
         //    rayDirection.Normalize();
@@ -440,7 +440,7 @@ namespace TrueSync.Physics3D {
 
         //                index3 += (rayDirection.Z > FP.Zero) ? 1 : -1;
         //                if (index3 >= axis3.Count || index3 < 0) break;
-                       
+
         //            }
         //            else
         //            {

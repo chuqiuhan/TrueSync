@@ -4,11 +4,9 @@ using UnityEngine;
 
 namespace TrueSync
 {
-    // 帧同步状态 信息显示 
 	[AddComponentMenu("")]
 	public class TrueSyncStats : MonoBehaviour
 	{
-        // 状态UI类
 		private class StatsUI
 		{
 			public Color color;

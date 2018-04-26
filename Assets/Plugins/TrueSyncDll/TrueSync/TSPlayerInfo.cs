@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace TrueSync
 {
-    // 帧同步玩家信息
 	[Serializable]
 	public class TSPlayerInfo
 	{

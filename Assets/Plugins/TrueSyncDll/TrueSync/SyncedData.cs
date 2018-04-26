@@ -81,12 +81,11 @@ namespace TrueSync
 			return @new;
 		}
 
-        // ±àÂë
 		public static byte[] Encode(SyncedData[] syncedData)
 		{
 			SyncedData.bytesToEncode.Clear();
 			bool flag = syncedData.Length != 0;
-			if (flag) // ÓÐÊý¾Ý
+			if (flag)
 			{
 				syncedData[0].GetEncodedHeader(SyncedData.bytesToEncode);
 				for (int i = 0; i < syncedData.Length; i++)

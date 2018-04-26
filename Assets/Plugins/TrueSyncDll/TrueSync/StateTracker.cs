@@ -4,10 +4,8 @@ using System.Reflection;
 
 namespace TrueSync
 {
-    // 状态追踪类
 	public class StateTracker
     {
-        #region 状态类
         internal class State
 		{
 			private StateTracker.TrackedInfo trackedInfo;
@@ -67,16 +65,13 @@ namespace TrueSync
 				}
 			}
 		}
-        #endregion 状态类
 
-        #region 追踪信息类
         internal class TrackedInfo
 		{
-			public object relatedObj; // 相关的对象
+			public object relatedObj;
 
-			public MemberInfo propInfo; // 成员信息
+			public MemberInfo propInfo;
 		}
-        #endregion 追踪信息类
 
         private static ResourcePoolStateTrackerState resourcePool = new ResourcePoolStateTrackerState();
 
@@ -88,21 +83,17 @@ namespace TrueSync
 
 		internal static StateTracker instance;
 
-        #region 公共方法
-        // 初始化
         public static void Init(int rollbackWindow)
 		{
 			StateTracker.instance = new StateTracker();
 			StateTracker.instance.states = new GenericBufferWindow<List<StateTracker.State>>(rollbackWindow);
 		}
 
-        // 清空
 		public static void CleanUp()
 		{
 			StateTracker.instance = null;
 		}
         
-        // 添加追踪
         public static void AddTracking(object obj, string path)
 		{
 			bool flag = StateTracker.instance != null;
@@ -129,7 +120,6 @@ namespace TrueSync
 			}
 		}
 
-        // 添加追踪
 		public static void AddTracking(object obj)
 		{
 			bool flag = StateTracker.instance != null;
@@ -161,10 +151,7 @@ namespace TrueSync
 				}
 			}
 		}
-        #endregion 公共方法
 
-        #region 内部方法
-        // 保存状态
         internal void SaveState()
 		{
 			List<StateTracker.State> list = this.states.Current();
@@ -178,7 +165,6 @@ namespace TrueSync
 			this.MoveNextState();
 		}
 
-        // 重新保存状态
 		internal void RestoreState()
 		{
 			List<StateTracker.State> list = this.states.Current();
@@ -191,15 +177,11 @@ namespace TrueSync
 			}
 		}
 
-        // 移动到下一个状态
 		internal void MoveNextState()
 		{
 			this.states.MoveNext();
 		}
-        #endregion 内部方法
 
-        #region 私有方法
-        // 获取追踪信息
         private static StateTracker.TrackedInfo GetTrackedInfo(object obj, string name)
 		{
 			string[] array = name.Split(new char[]
@@ -254,6 +236,5 @@ namespace TrueSync
 			result = null;
 			return result;
         }
-        #endregion 私有方法
     }
 }

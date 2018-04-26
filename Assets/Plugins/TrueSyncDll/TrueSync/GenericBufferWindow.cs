@@ -2,18 +2,16 @@ using System;
 
 namespace TrueSync
 {
-    // 通用缓冲窗口(循环列表结构)
 	public class GenericBufferWindow<T>
 	{
-		public delegate T NewInstance(); // 新实例
+		public delegate T NewInstance();
 
-		public T[] buffer; // 缓冲数组
+		public T[] buffer;
 
-		public int size; // 容量
+		public int size;
 
-		public int currentIndex; // 当前索引
+		public int currentIndex;
 
-        #region 构造器
         public GenericBufferWindow(int size)
 		{
 			this.size = size;
@@ -35,19 +33,16 @@ namespace TrueSync
 				this.buffer[i] = NewInstance();
 			}
 		}
-        #endregion 构造器
 
-        #region 公共方法
-        // 重置容量
         public void Resize(int newSize)
 		{
 			bool flag = newSize == this.size;
-			if (!flag) // 新容量与就容量不一致，需要重置
+			if (!flag)
 			{
-				T[] array = new T[newSize]; // 新容量数组
-				int num = newSize - this.size; // 容量差
+				T[] array = new T[newSize];
+				int num = newSize - this.size;
 				bool flag2 = newSize > this.size;
-				if (flag2) // 扩容
+				if (flag2)
 				{
 					for (int i = 0; i < this.size; i++)
 					{
@@ -56,17 +51,17 @@ namespace TrueSync
 						{
 							array[i] = this.buffer[i];
 						}
-                        else // 把旧缓冲数组中currentIndex之后的数据，放到了新缓冲数组之后 // 不明白
+                        else
 						{
 							array[i + num] = this.buffer[i];
 						}
 					}
-					for (int j = 0; j < num; j++) // 在缓冲数组的空白处补充上新的实例
+					for (int j = 0; j < num; j++)
 					{
 						array[this.currentIndex + j] = Activator.CreateInstance<T>();
 					}
 				}
-				else // 减容
+				else
 				{
 					for (int k = 0; k < newSize; k++)
 					{
@@ -87,35 +82,30 @@ namespace TrueSync
 			}
 		}
 
-        // 设置缓冲元素
         public void Set(T instance)
         {
             this.buffer[this.currentIndex] = instance;
         }
 
-        // 返回前一个缓冲元素
         public T Previous()
         {
             int num = this.currentIndex - 1;
             bool flag = num < 0;
-            if (flag) // 当没有前一个缓冲元素时，则返回最后一个
+            if (flag)
             {
                 num = this.size - 1;
             }
             return this.buffer[num];
         }
 
-        // 返回当前元素
         public T Current()
         {
             return this.buffer[this.currentIndex];
         }
 
-        // 移动到下一个索引
         public void MoveNext()
         {
             this.currentIndex = (this.currentIndex + 1) % this.size;
         }
-        #endregion 公共方法
 	}
 }

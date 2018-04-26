@@ -1096,8 +1096,8 @@ namespace TrueSync
             result.M32 = FP.Zero;
             result.M33 = FP.One;
             result.M34 = FP.Zero;
-            result.M41 = FP.Zero;
-            result.M42 = FP.Zero;
+            result.M41 = x;
+            result.M42 = y;
             result.M43 = FP.Zero;
             result.M44 = FP.One;
 

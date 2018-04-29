@@ -395,6 +395,8 @@ namespace TrueSync {
             }
         }
 
+        private FP tsDeltaTime = 0;
+
         void Update() {
             if (lockstep != null && startState != StartState.STARTED) {
                 if (startState == StartState.BEHAVIOR_INITIALIZED) {
@@ -402,6 +404,19 @@ namespace TrueSync {
                 } else if (startState == StartState.FIRST_UPDATE) {
                     lockstep.RunSimulation(true);
                     startState = StartState.STARTED;
+                }
+            }
+
+            if (lockstep != null)
+            {
+                tsDeltaTime += UnityEngine.Time.deltaTime;
+
+                if (tsDeltaTime >= lockedTimeStep)
+                {
+                    tsDeltaTime -= lockedTimeStep;
+
+                    instance.scheduler.UpdateAllCoroutines();
+                    lockstep.Update();
                 }
             }
         }
@@ -698,21 +713,6 @@ namespace TrueSync {
                             }
                         }
                     }
-                }
-            }
-        }
-
-        private FP tsDeltaTime = 0;
-
-        void FixedUpdate() {
-            if (lockstep != null) {
-                tsDeltaTime += UnityEngine.Time.deltaTime;
-
-                if (tsDeltaTime >= (lockedTimeStep - JitterTimeFactor)) {
-                    tsDeltaTime = 0;
-
-                    instance.scheduler.UpdateAllCoroutines();
-                    lockstep.Update();
                 }
             }
         }

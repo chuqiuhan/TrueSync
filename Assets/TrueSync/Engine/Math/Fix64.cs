@@ -605,9 +605,21 @@ namespace TrueSync {
 
         //[MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         public static long ClampSinValue(long angle, out bool flipHorizontal, out bool flipVertical) {
-            // Clamp value to 0 - 2*PI using modulo; this is very slow but there's no better way AFAIK
-            var clamped2Pi = angle % PI_TIMES_2;
-            if (angle < 0) {
+            var largePI = 7244019458077122842;
+            // Obtained from ((Fix64)1686629713.065252369824872831112M).m_rawValue
+            // This is (2^29)*PI, where 29 is the largest N such that (2^N)*PI < MaxValue.
+            // The idea is that this number contains way more precision than PI_TIMES_2,
+            // and (((x % (2^29*PI)) % (2^28*PI)) % ... (2^1*PI) = x % (2 * PI)
+            // In practice this gives us an error of about 1,25e-9 in the worst case scenario (Sin(MaxValue))
+            // Whereas simply doing x % PI_TIMES_2 is the 2e-3 range.
+
+            var clamped2Pi = angle;
+            for (int i = 0; i < 29; ++i)
+            {
+                clamped2Pi %= (largePI >> i);
+            }
+            if (angle < 0)
+            {
                 clamped2Pi += PI_TIMES_2;
             }
 
@@ -616,13 +628,15 @@ namespace TrueSync {
             flipVertical = clamped2Pi >= PI;
             // obtain (angle % PI) from (angle % 2PI) - much faster than doing another modulo
             var clampedPi = clamped2Pi;
-            while (clampedPi >= PI) {
+            while (clampedPi >= PI)
+            {
                 clampedPi -= PI;
             }
             flipHorizontal = clampedPi >= PI_OVER_2;
             // obtain (angle % PI_OVER_2) from (angle % PI) - much faster than doing another modulo
             var clampedPiOver2 = clampedPi;
-            if (clampedPiOver2 >= PI_OVER_2) {
+            if (clampedPiOver2 >= PI_OVER_2)
+            {
                 clampedPiOver2 -= PI_OVER_2;
             }
             return clampedPiOver2;
@@ -635,8 +649,7 @@ namespace TrueSync {
         public static FP Cos(FP x) {
             var xl = x._serializedValue;
             var rawAngle = xl + (xl > 0 ? -PI - PI_OVER_2 : PI_OVER_2);
-            FP a2 = Sin(new FP(rawAngle));
-            return a2;
+            return Sin(new FP(rawAngle));
         }
 
         /// <summary>
@@ -680,8 +693,7 @@ namespace TrueSync {
             var delta = FastMul(indexError, FastAbs(FastSub(nearestValue, secondNearestValue)))._serializedValue;
             var interpolatedValue = nearestValue._serializedValue + delta;
             var finalValue = flip ? -interpolatedValue : interpolatedValue;
-            FP a2 = new FP(finalValue);
-            return a2;
+            return new FP(finalValue);
         }
 
         /// <summary>

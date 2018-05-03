@@ -16,6 +16,11 @@ namespace TrueSync
 			{
 				return this.collection[index];
 			}
+
+            set
+            {
+                this.collection[index] = value;
+            }
 		}
 
 		public int Count
@@ -77,6 +82,11 @@ namespace TrueSync
 		{
 			return this.collection.Remove(item);
 		}
+
+        public void RemoveAt(int i)
+        {
+            this.collection.RemoveAt(i);
+        }
 
 		public IEnumerator<T> GetEnumerator()
 		{

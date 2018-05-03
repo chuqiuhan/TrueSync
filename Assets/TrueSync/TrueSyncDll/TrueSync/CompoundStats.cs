@@ -4,7 +4,7 @@ namespace TrueSync
 {
 	public class CompoundStats
 	{
-		private const float BUFFER_LIFETIME = 2f;
+		private FP BUFFER_LIFETIME = 2;
 
 		private const int BUFFER_WINDOW = 10;
 
@@ -12,7 +12,7 @@ namespace TrueSync
 
 		public GenericBufferWindow<Stats> bufferStats;
 
-		private float timerAcc;
+		private FP timerAcc;
 
 		public CompoundStats()
 		{
@@ -21,15 +21,15 @@ namespace TrueSync
 			this.timerAcc = 0f;
 		}
 
-		public void UpdateTime(float time)
+		public void UpdateTime(FP time)
 		{
 			this.timerAcc += time;
-			bool flag = this.timerAcc >= 2f;
+			bool flag = this.timerAcc >= 2;
 			if (flag)
 			{
 				this.bufferStats.MoveNext();
 				this.bufferStats.Current().Clear();
-				this.timerAcc = 0f;
+				this.timerAcc = 0;
 			}
 		}
 

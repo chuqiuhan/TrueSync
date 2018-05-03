@@ -11,7 +11,7 @@ namespace TrueSync {
 
         [FormerlySerializedAs("radius")]
         [SerializeField]
-        private float _radius;
+        private FP _radius;
 
         /**
          *  @brief Radius of the sphere. 
@@ -26,7 +26,7 @@ namespace TrueSync {
             }
 
             set {
-                _radius = value.AsFloat();
+                _radius = value;
 
                 if (_body != null) {
                     ((SphereShape)_body.Shape).Radius = value;

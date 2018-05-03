@@ -35,8 +35,7 @@ namespace TrueSync {
         [HideInInspector]
         [AddTracking]
         private TSVector _position;
-
-        private TSVector _prevPosition;
+        private bool _isPositionDirty = false;
         /**
         *  @brief Property access to position. 
         *  
@@ -45,16 +44,21 @@ namespace TrueSync {
         public TSVector position {
             get {
                 if (tsCollider != null && tsCollider.Body != null) {
+                    _isPositionDirty = true;
                     position = tsCollider.Body.TSPosition - scaledCenter;
                 }
 
                 return _position;
             }
             set {
-                _prevPosition = _position;
+
+                if (_position.x == value.x && _position.y == value.y && _position.z == value.z)
+                    return;
+
                 _position = value;
 
-                if (tsCollider != null && tsCollider.Body != null) {
+                if (tsCollider != null && tsCollider.Body != null && !_isPositionDirty) {
+                    _isPositionDirty = false;
                     tsCollider.Body.TSPosition = _position + scaledCenter;
                 }
 
@@ -86,7 +90,7 @@ namespace TrueSync {
         [HideInInspector]
         [AddTracking]
         private TSQuaternion _rotation;
-
+        private bool _isRotationDirty = false;
         /**
         *  @brief Property access to rotation. 
         *  
@@ -95,15 +99,21 @@ namespace TrueSync {
         public TSQuaternion rotation {
             get {
                 if (tsCollider != null && tsCollider.Body != null) {
+                    _isRotationDirty = true;
                     rotation = TSQuaternion.CreateFromMatrix(tsCollider.Body.TSOrientation);
                 }
 
                 return _rotation;
             }
             set {
+
+                if (_rotation.x == value.x && _rotation.y == value.y && _rotation.z == value.z && _rotation.w == value.w)
+                    return;
+
                 _rotation = value;
 
-                if (tsCollider != null && tsCollider.Body != null) {
+                if (tsCollider != null && tsCollider.Body != null && !_isRotationDirty) {
+                    _isRotationDirty = false;
                     tsCollider.Body.TSOrientation = TSMatrix.CreateFromQuaternion(_rotation);
                 }
 
@@ -551,19 +561,6 @@ namespace TrueSync {
         }
 
         private void UpdatePlayMode() {
-
-            //if (tsParent != null)
-            //{
-            //    _localPosition = tsParent.InverseTransformPoint(position);
-            //    TSMatrix matrix = TSMatrix.CreateFromQuaternion(tsParent.rotation);
-            //    _localRotation = TSQuaternion.CreateFromMatrix(TSMatrix.Inverse(matrix)) * rotation;
-            //    Quaternion localRot = transform.localRotation;
-            //}
-            //else
-            //{
-            //    _localPosition = position;
-            //    _localRotation = rotation;
-            //}
 
             if (rb != null) {
                 if (rb.interpolation == TSRigidBody.InterpolateMode.Interpolate) {

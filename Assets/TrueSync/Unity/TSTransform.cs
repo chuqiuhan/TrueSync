@@ -53,15 +53,18 @@ namespace TrueSync {
             set {
 
                 if (_position.x == value.x && _position.y == value.y && _position.z == value.z)
+                {
+                    _isPositionDirty = false;
                     return;
+                }
 
                 _position = value;
 
                 if (tsCollider != null && tsCollider.Body != null && !_isPositionDirty) {
-                    _isPositionDirty = false;
                     tsCollider.Body.TSPosition = _position + scaledCenter;
                 }
 
+                _isPositionDirty = false;
                 UpdateChildTransform();
             }
         }
@@ -108,15 +111,18 @@ namespace TrueSync {
             set {
 
                 if (_rotation.x == value.x && _rotation.y == value.y && _rotation.z == value.z && _rotation.w == value.w)
+                {
+                    _isRotationDirty = false;
                     return;
+                }
 
                 _rotation = value;
 
                 if (tsCollider != null && tsCollider.Body != null && !_isRotationDirty) {
-                    _isRotationDirty = false;
                     tsCollider.Body.TSOrientation = TSMatrix.CreateFromQuaternion(_rotation);
                 }
 
+                _isRotationDirty = false;
                 UpdateChildTransform();
             }
         }

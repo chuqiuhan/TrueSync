@@ -65,9 +65,9 @@ namespace TrueSync.Physics2D
                     FP forcePercent = GetPercent(distance, radius);
 
                     TSVector2 forceVector = pos - overlappingBody.Position;
-                    forceVector *= 1f / FP.Sqrt(forceVector.x * forceVector.x + forceVector.y * forceVector.y);
+                    forceVector *= FP.One / FP.Sqrt(forceVector.x * forceVector.x + forceVector.y * forceVector.y);
                     forceVector *= TSMath.Min(force * forcePercent, maxForce);
-                    forceVector *= -1;
+                    forceVector *= -FP.One;
 
                     overlappingBody.ApplyLinearImpulse(forceVector);
                     forces.Add(overlappingBody, forceVector);
@@ -82,12 +82,13 @@ namespace TrueSync.Physics2D
             //(1-(distance/radius))^power-1
             // TODO - PORT
             // FP percent = (FP)Math.Pow(1 - ((distance - radius) / radius), Power) - 1;
-            FP percent = (FP)Math.Pow((1 - ((distance - radius) / radius)).AsFloat(), Power.AsFloat()) - 1;
+            //FP percent = (FP)Math.Pow((1 - ((distance - radius) / radius)).AsFloat(), Power.AsFloat()) - 1;
+            FP percent = TSMath.Pow(FP.One - ((distance - radius) / radius), Power) - FP.One;
 
             if (FP.IsNaN(percent))
-                return 0f;
+                return FP.Zero;
 
-            return TSMath.Clamp(percent, 0f, 1f);
+            return TSMath.Clamp(percent, FP.Zero, FP.One);
         }
     }
 }

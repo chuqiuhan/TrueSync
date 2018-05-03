@@ -5,6 +5,10 @@ using System.IO;
 
 public class LogHandler : MonoBehaviour
 {
+    [SerializeField]
+    private int _maxLogCount = 300;
+    private int _logCount = 0;
+
     private StreamWriter _writer;
     void Awake()
     {
@@ -12,12 +16,18 @@ public class LogHandler : MonoBehaviour
         _writer.Write("\n\n=============== Game started ================\n\n");
         DontDestroyOnLoad(gameObject);
         Application.logMessageReceived += HandleLog;
+        _logCount = 0;
     }
 
     private void HandleLog(string condition, string stackTrace, LogType type)
     {
-        var logEntry = string.Format("\n{0} {1:f8}" , Time.frameCount, condition);
-        _writer.Write(logEntry);
+        _logCount++;
+
+        if (_logCount <= _maxLogCount)
+        {
+            var logEntry = string.Format("\n{0:f8}", condition);
+            _writer.Write(logEntry);
+        }
     }
 
     void OnDestroy()

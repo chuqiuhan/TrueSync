@@ -1542,8 +1542,8 @@ namespace TrueSync.Physics2D
             return body;
         }
 
-        public string Checksum() {
-            return Position + "|" + Rotation;
+        public FP Checksum() {
+            return Position.x + Position.y + Rotation;
         }
 
         public void TSApplyForce(TSVector2 force) {

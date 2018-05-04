@@ -938,8 +938,11 @@ namespace TrueSync.Physics3D {
             }
         }
 
-        public string Checksum() {
-            return string.Format("{0}|{1}", position, orientation);
+        public FP Checksum() {
+            return position.x + position.y + position.z
+                + orientation.M11 + orientation.M12 + orientation.M13
+                + orientation.M21 + orientation.M22 + orientation.M23
+                + orientation.M31 + orientation.M32 + orientation.M33;
         }
 
         public void TSApplyForce(TSVector force) {

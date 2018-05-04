@@ -10,6 +10,6 @@ namespace TrueSync
 			set;
 		}
 
-		string Checksum();
+		FP Checksum();
 	}
 }

@@ -18,13 +18,14 @@ namespace TrueSync
 			List<IBody> list = this.physicsManager.GetWorld().Bodies();
 			int i = 0;
 			int count = list.Count;
+            FP checkSum = FP.Zero;
 			while (i < count)
 			{
 				IBody body = list[i];
-				this.sb.Append(body.Checksum());
-				this.sb.Append("|");
+                checkSum += body.Checksum();
 				i++;
 			}
+            this.sb.Append(checkSum);
 			return this.sb.ToString();
 		}
 	}

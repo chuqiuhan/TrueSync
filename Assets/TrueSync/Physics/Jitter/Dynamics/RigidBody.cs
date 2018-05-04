@@ -938,7 +938,7 @@ namespace TrueSync.Physics3D {
             }
         }
 
-        public string Checkum() {
+        public string Checksum() {
             return string.Format("{0}|{1}", position, orientation);
         }
 

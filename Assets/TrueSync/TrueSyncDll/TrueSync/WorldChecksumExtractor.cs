@@ -21,7 +21,7 @@ namespace TrueSync
 			while (i < count)
 			{
 				IBody body = list[i];
-				this.sb.Append(body.Checkum());
+				this.sb.Append(body.Checksum());
 				this.sb.Append("|");
 				i++;
 			}

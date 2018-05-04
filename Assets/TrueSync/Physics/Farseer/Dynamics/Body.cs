@@ -1542,7 +1542,7 @@ namespace TrueSync.Physics2D
             return body;
         }
 
-        public string Checkum() {
+        public string Checksum() {
             return Position + "|" + Rotation;
         }
 

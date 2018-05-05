@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TrueSync
 {
-	public class HashList<T> : ICollection<T>, IEnumerable<T>, IEnumerable
+	public class HashList<T> : ICollection<T>, IEnumerable<T>, IEnumerable where T : IComparable
 	{
 		private readonly List<T> collection = new List<T>();
 
@@ -110,7 +110,10 @@ namespace TrueSync
 
 		public void AddRange(IEnumerable<T> iCollection)
 		{
-			this.collection.AddRange(iCollection);
+            foreach (T item in iCollection)
+            {
+                Add(item);
+            }
 		}
 	}
 }

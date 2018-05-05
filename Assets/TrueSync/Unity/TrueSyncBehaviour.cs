@@ -6,7 +6,7 @@ namespace TrueSync {
     /**
      *  @brief Represents each player's behaviour simulated on every machine connected to the game.
      */
-    public abstract class TrueSyncBehaviour : MonoBehaviour, ITrueSyncBehaviourGamePlay, ITrueSyncBehaviourCallbacks {
+    public abstract class TrueSyncBehaviour : MonoBehaviour, ITrueSyncBehaviourGamePlay, ITrueSyncBehaviourCallbacks, IComparable {
 
         /**
          * @brief Number of players connected to the game.
@@ -176,6 +176,88 @@ namespace TrueSync {
          * @brief Callback called when a player get disconnected.
          **/
         public virtual void OnPlayerDisconnection(int playerId) {}
+
+        /**
+         * @brief Callback called when collision enter.
+         **/
+        public virtual void OnSyncedCollisionEnter(TSCollision other) { }
+
+        /**
+         * @brief Callback called when collision stay.
+         **/
+        public virtual void OnSyncedCollisionStay(TSCollision other) { }
+
+        /**
+         * @brief Callback called when collision exit.
+         **/
+        public virtual void OnSyncedCollisionExit(TSCollision other) { }
+
+        /**
+         * @brief Callback called when trigger enter.
+         **/
+        public virtual void OnSyncedTriggerEnter(TSCollision other) { }
+
+        /**
+         * @brief Callback called when trigger stay.
+         **/
+        public virtual void OnSyncedTriggerStay(TSCollision other) { }
+
+        /**
+         * @brief Callback called when trigger exit.
+         **/
+        public virtual void OnSyncedTriggerExit(TSCollision other) { }
+
+
+        /**
+         * @brief Callback called when collision2d enter.
+         **/
+        public virtual void OnSyncedCollisionEnter2D(TSCollision2D other) { }
+
+        /**
+         * @brief Callback called when collision2d stay.
+         **/
+        public virtual void OnSyncedCollisionStay2D(TSCollision2D other) { }
+
+        /**
+         * @brief Callback called when collision2d exit.
+         **/
+        public virtual void OnSyncedCollisionExit2D(TSCollision2D other) { }
+
+        /**
+         * @brief Callback called when trigger2d enter.
+         **/
+        public virtual void OnSyncedTriggerEnter2D(TSCollision2D other) { }
+
+        /**
+         * @brief Callback called when trigger2d stay.
+         **/
+        public virtual void OnSyncedTriggerStay2D(TSCollision2D other) { }
+
+        /**
+         * @brief Callback called when trigger2d exit.
+         **/
+        public virtual void OnSyncedTriggerExit2D(TSCollision2D other) { }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TrueSyncBehaviour)
+            {
+                long a = ((TrueSyncBehaviour)obj).GetHashCode();
+                long b = GetHashCode();
+
+                long diff = a - b;
+                if (diff < 0)
+                {
+                    return 1;
+                }
+                else if (diff > 0)
+                {
+                    return -1;
+                }
+            }
+
+            return 0;
+        }
 
     }
 

@@ -21,6 +21,8 @@ namespace TrueSync {
 
         Dictionary<Physics2D.Body, Dictionary<Physics2D.Body, TSCollision2D>> collisionInfo;
 
+        Dictionary<IBody, HashList<TrueSyncBehaviour>> behavioursMap;
+
         /**
          *  @brief Property access to simulated gravity.
          **/
@@ -58,6 +60,7 @@ namespace TrueSync {
 
             gameObjectMap = new Dictionary<IBody, GameObject>();
             collisionInfo = new Dictionary<Physics2D.Body, Dictionary<Physics2D.Body, TSCollision2D>>();
+            behavioursMap = new Dictionary<IBody, HashList<TrueSyncBehaviour>>();
 
             instance = this;
             AddRigidBodies();
@@ -98,7 +101,16 @@ namespace TrueSync {
             }
 
             tsCollider.Initialize(world);
-            gameObjectMap[tsCollider._body] = tsCollider.gameObject;
+            GameObject gameObject = tsCollider.gameObject;
+            gameObjectMap[tsCollider._body] = gameObject;
+
+            HashList<TrueSyncBehaviour> behaviours = new HashList<TrueSyncBehaviour>();
+            TrueSyncBehaviour[] behavioursArray = gameObject.GetComponents<TrueSyncBehaviour>();
+            for (int i = 0, count = behavioursArray.Length; i < count; i++)
+            {
+                behaviours.Add(behavioursArray[i]);
+            }
+            behavioursMap[tsCollider._body] = behaviours;
 
             if (tsCollider.gameObject.transform.parent != null && tsCollider.gameObject.transform.parent.GetComponentInParent<TSCollider2D>() != null) {
                 TSCollider2D parentCollider = tsCollider.gameObject.transform.parent.GetComponentInParent<TSCollider2D>();
@@ -117,6 +129,11 @@ namespace TrueSync {
         public void RemoveBody(IBody iBody) {
             world.RemoveBody((TrueSync.Physics2D.Body) iBody);
             world.ProcessRemovedBodies();
+
+            gameObjectMap.Remove(iBody);
+            behavioursMap.Remove(iBody);
+
+            // TODO: remove iBody from collisioninfo
         }
 
         public void OnRemoveBody(Action<IBody> OnRemoveBody) {
@@ -186,10 +203,43 @@ namespace TrueSync {
                 return;
             }
 
-            b1.SendMessage(callbackName, GetCollisionInfo(body1, body2, contact), SendMessageOptions.DontRequireReceiver);
-            b2.SendMessage(callbackName, GetCollisionInfo(body2, body1, contact), SendMessageOptions.DontRequireReceiver);
+            HashList<TrueSyncBehaviour> b1Behaviours = behavioursMap[body1];
+            for (int i = 0, count = b1Behaviours.Count; i < count; i++)
+            {
+                TSCollision2D collision = GetCollisionInfo(body1, body2, contact);
+                if (String.Equals(callbackName, "OnSyncedCollisionEnter", StringComparison.InvariantCultureIgnoreCase))
+                    b1Behaviours[i].OnSyncedCollisionEnter2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedCollisionStay", StringComparison.InvariantCultureIgnoreCase))
+                    b1Behaviours[i].OnSyncedCollisionStay2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedCollisionExit", StringComparison.InvariantCultureIgnoreCase))
+                    b1Behaviours[i].OnSyncedCollisionExit2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedTriggerEnter", StringComparison.InvariantCultureIgnoreCase))
+                    b1Behaviours[i].OnSyncedTriggerEnter2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedTriggerStay", StringComparison.InvariantCultureIgnoreCase))
+                    b1Behaviours[i].OnSyncedTriggerStay2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedTriggerExit", StringComparison.InvariantCultureIgnoreCase))
+                    b1Behaviours[i].OnSyncedTriggerExit2D(collision);
+            }
 
-			TrueSyncManager.UpdateCoroutines ();
+            HashList<TrueSyncBehaviour> b2Behaviours = behavioursMap[body2];
+            for (int i = 0, count = b2Behaviours.Count; i < count; i++)
+            {
+                TSCollision2D collision = GetCollisionInfo(body2, body1, contact);
+                if (String.Equals(callbackName, "OnSyncedCollisionEnter", StringComparison.InvariantCultureIgnoreCase))
+                    b2Behaviours[i].OnSyncedCollisionEnter2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedCollisionStay", StringComparison.InvariantCultureIgnoreCase))
+                    b2Behaviours[i].OnSyncedCollisionStay2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedCollisionExit", StringComparison.InvariantCultureIgnoreCase))
+                    b2Behaviours[i].OnSyncedCollisionExit2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedTriggerEnter", StringComparison.InvariantCultureIgnoreCase))
+                    b2Behaviours[i].OnSyncedTriggerEnter2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedTriggerStay", StringComparison.InvariantCultureIgnoreCase))
+                    b2Behaviours[i].OnSyncedTriggerStay2D(collision);
+                else if (String.Equals(callbackName, "OnSyncedTriggerExit", StringComparison.InvariantCultureIgnoreCase))
+                    b2Behaviours[i].OnSyncedTriggerExit2D(collision);
+            }
+
+            TrueSyncManager.UpdateCoroutines ();
         }
 
         private TSCollision2D GetCollisionInfo(Physics2D.Body body1, Physics2D.Body body2, TrueSync.Physics2D.Contact c) {

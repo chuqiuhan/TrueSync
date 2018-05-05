@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TrueSync;
 
-public class Test : TrueSyncBehaviour
+public class StackDropTest : TrueSyncBehaviour
 {
     [SerializeField]
     private int xSize = 5;

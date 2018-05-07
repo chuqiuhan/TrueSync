@@ -26,7 +26,7 @@ using System.Collections;
 namespace TrueSync.Physics3D {
     /// <summary>
     /// For easy access, Arbiters are stored in a Hashtable(ArbiterMap). 
-    /// To find the Arbiter fortwo RigidBodies, build an ArbiterKey for the two bodies
+    /// To find the Arbiter for  two RigidBodies, build an ArbiterKey for the two bodies
     /// and use it as the lookup key for the ArbiterMap.
     /// </summary>
 	public struct ArbiterKey : IComparable
@@ -123,7 +123,7 @@ namespace TrueSync.Physics3D {
     {
         private Dictionary<ArbiterKey, Arbiter> dictionaryKeys = new Dictionary<ArbiterKey, Arbiter>(new ArbiterKeyComparer());
 
-        private HashList<ArbiterKey> keysSortedList = new HashList<ArbiterKey>();
+        private HashList<int> keysSortedList = new HashList<int>();
 
         public ArbiterKey lookUpKey;
 
@@ -161,7 +161,7 @@ namespace TrueSync.Physics3D {
 
         internal void Add(ArbiterKey key, Arbiter arbiter)
         {
-            keysSortedList.Add(key);
+            keysSortedList.Add(key.GetHashCode());
             dictionaryKeys.Add(key, arbiter);
         }
 
@@ -174,7 +174,7 @@ namespace TrueSync.Physics3D {
         internal void Remove(Arbiter arbiter)
         {
             lookUpKey.SetBodies(arbiter.body1, arbiter.body2);
-            keysSortedList.Remove(lookUpKey);
+            keysSortedList.Remove(lookUpKey.GetHashCode());
             dictionaryKeys.Remove(lookUpKey);
         }
 

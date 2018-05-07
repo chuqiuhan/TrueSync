@@ -222,7 +222,10 @@ namespace TrueSync {
         /// Subtracts y from x witout performing overflow checking. Should be inlined by the CLR.
         /// </summary>
         public static FP FastSub(FP x, FP y) {
-            return new FP(x._serializedValue - y._serializedValue);
+            FP result;
+            result._serializedValue = x._serializedValue - y._serializedValue;
+            return result;
+            //return new FP(x._serializedValue - y._serializedValue);
         }
 
         static long AddOverflowHelper(long x, long y, ref bool overflow) {
@@ -550,25 +553,29 @@ namespace TrueSync {
         /// </summary>
         public static FP Sin(FP x) {
             bool flipHorizontal, flipVertical;
-            var clampedL = ClampSinValue(x._serializedValue, out flipHorizontal, out flipVertical);
-            var clamped = new FP(clampedL);
+            long clampedL = ClampSinValue(x._serializedValue, out flipHorizontal, out flipVertical);
+            FP clamped;
+            clamped._serializedValue = clampedL;
 
             // Find the two closest values in the LUT and perform linear interpolation
             // This is what kills the performance of this function on x86 - x64 is fine though
-            var rawIndex = FastMul(clamped, LutInterval);
-            var roundedIndex = Round(rawIndex);
-            var indexError = 0;//FastSub(rawIndex, roundedIndex);
+            FP rawIndex = FastMul(clamped, LutInterval);
+            FP roundedIndex = Round(rawIndex);
+            int indexError = 0;//FastSub(rawIndex, roundedIndex);
 
-            var nearestValue = new FP(SinLut[flipHorizontal ?
+            FP nearestValue;
+            nearestValue._serializedValue = SinLut[flipHorizontal ?
                 SinLut.Length - 1 - (int)roundedIndex :
-                (int)roundedIndex]);
-            var secondNearestValue = new FP(SinLut[flipHorizontal ?
-                SinLut.Length - 1 - (int)roundedIndex - Sign(indexError) :
-                (int)roundedIndex + Sign(indexError)]);
+                (int)roundedIndex];
 
-            var delta = FastMul(indexError, FastAbs(FastSub(nearestValue, secondNearestValue)))._serializedValue;
-            var interpolatedValue = nearestValue._serializedValue + (flipHorizontal ? -delta : delta);
-            var finalValue = flipVertical ? -interpolatedValue : interpolatedValue;
+            FP secondNearestValue;
+            secondNearestValue._serializedValue = SinLut[flipHorizontal ?
+                SinLut.Length - 1 - (int)roundedIndex - Sign(indexError) :
+                (int)roundedIndex + Sign(indexError)];
+
+            long delta = FastMul(indexError, FastAbs(FastSub(nearestValue, secondNearestValue)))._serializedValue;
+            long interpolatedValue = nearestValue._serializedValue + (flipHorizontal ? -delta : delta);
+            long finalValue = flipVertical ? -interpolatedValue : interpolatedValue;
 
             //FP a2 = new FP(finalValue);
             FP a2;
@@ -647,9 +654,11 @@ namespace TrueSync {
         /// See Sin() for more details.
         /// </summary>
         public static FP Cos(FP x) {
-            var xl = x._serializedValue;
-            var rawAngle = xl + (xl > 0 ? -PI - PI_OVER_2 : PI_OVER_2);
-            return Sin(new FP(rawAngle));
+            long xl = x._serializedValue;
+            long rawAngle = xl + (xl > 0 ? -PI - PI_OVER_2 : PI_OVER_2);
+            FP angle;
+            angle._serializedValue = rawAngle;
+            return Sin(angle);
         }
 
         /// <summary>
@@ -659,7 +668,9 @@ namespace TrueSync {
         public static FP FastCos(FP x) {
             var xl = x._serializedValue;
             var rawAngle = xl + (xl > 0 ? -PI - PI_OVER_2 : PI_OVER_2);
-            return FastSin(new FP(rawAngle));
+            FP angle;
+            angle._serializedValue = rawAngle;
+            return FastSin(angle);
         }
 
         /// <summary>
@@ -680,20 +691,26 @@ namespace TrueSync {
                 clampedPi = PI_OVER_2 - (clampedPi - PI_OVER_2);
             }
 
-            var clamped = new FP(clampedPi);
+            FP clamped;
+            clamped._serializedValue = clampedPi;
 
             // Find the two closest values in the LUT and perform linear interpolation
-            var rawIndex = FastMul(clamped, LutInterval);
-            var roundedIndex = Round(rawIndex);
-            var indexError = FastSub(rawIndex, roundedIndex);
+            FP rawIndex = FastMul(clamped, LutInterval);
+            FP roundedIndex = Round(rawIndex);
+            FP indexError = FastSub(rawIndex, roundedIndex);
 
-            var nearestValue = new FP(TanLut[(int)roundedIndex]);
-            var secondNearestValue = new FP(TanLut[(int)roundedIndex + Sign(indexError)]);
+            FP nearestValue;
+            nearestValue._serializedValue = TanLut[(int)roundedIndex];
 
-            var delta = FastMul(indexError, FastAbs(FastSub(nearestValue, secondNearestValue)))._serializedValue;
-            var interpolatedValue = nearestValue._serializedValue + delta;
-            var finalValue = flip ? -interpolatedValue : interpolatedValue;
-            return new FP(finalValue);
+            FP secondNearestValue;
+            secondNearestValue._serializedValue = TanLut[(int)roundedIndex + Sign(indexError)];
+
+            long delta = FastMul(indexError, FastAbs(FastSub(nearestValue, secondNearestValue)))._serializedValue;
+            long interpolatedValue = nearestValue._serializedValue + delta;
+            long finalValue = flip ? -interpolatedValue : interpolatedValue;
+            FP result;
+            result._serializedValue = finalValue;
+            return result;
         }
 
         /// <summary>
@@ -932,7 +949,9 @@ namespace TrueSync {
         }
 
         public static FP FromRaw(long rawValue) {
-            return new FP(rawValue);
+            FP result;
+            result._serializedValue = rawValue;
+            return result;
         }
 
         internal static void GenerateAcosLut() {

@@ -179,6 +179,8 @@ namespace TrueSync {
             }
         }
 
+        private Transform transformCache;
+
         /**
         *  @brief Rotates game object to point forward vector to a target position. 
         *  
@@ -502,7 +504,6 @@ namespace TrueSync {
             }
 
             Initialize();
-			rb = GetComponent<TSRigidBody> ();
         }
 
         /**
@@ -513,12 +514,15 @@ namespace TrueSync {
                 return;
             }
 
+            rb = GetComponent<TSRigidBody>();
+            transformCache = transform;
+
             tsCollider = GetComponent<TSCollider>();
-            if (transform.parent != null) {
-                tsParent = transform.parent.GetComponent<TSTransform>();
+            if (transformCache.parent != null) {
+                tsParent = transformCache.parent.GetComponent<TSTransform>();
             }
 
-            foreach (Transform child in transform) {
+            foreach (Transform child in transformCache) {
                 TSTransform tsChild = child.GetComponent<TSTransform>();
                 if (tsChild != null) {
                     tsChildren.Add(tsChild);
@@ -553,14 +557,15 @@ namespace TrueSync {
         }
 
         private void UpdateEditMode() {
-            if (transform.hasChanged) {
-                _position = transform.position.ToTSVector();
-                _rotation = transform.rotation.ToTSQuaternion();
-                _lossyScale = transform.lossyScale.ToTSVector();
+            Transform trans = transform;
+            if (trans.hasChanged) {
+                _position = trans.position.ToTSVector();
+                _rotation = trans.rotation.ToTSQuaternion();
+                _lossyScale = trans.lossyScale.ToTSVector();
 
-                _localPosition = transform.localPosition.ToTSVector();
-                _localRotation = transform.localRotation.ToTSQuaternion();
-                _localScale = transform.localScale.ToTSVector();
+                _localPosition = trans.localPosition.ToTSVector();
+                _localRotation = trans.localRotation.ToTSQuaternion();
+                _localScale = trans.localScale.ToTSVector();
 
                 _serialized = true;
             }
@@ -570,24 +575,22 @@ namespace TrueSync {
 
             if (rb != null) {
                 if (rb.interpolation == TSRigidBody.InterpolateMode.Interpolate) {
-                    transform.position = Vector3.Lerp(transform.position, position.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
-                    transform.rotation = Quaternion.Lerp(transform.rotation, rotation.ToQuaternion(), Time.deltaTime * DELTA_TIME_FACTOR);
-                    transform.localScale = Vector3.Lerp(transform.localScale, localScale.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
+                    transformCache.position = Vector3.Lerp(transformCache.position, position.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
+                    transformCache.rotation = Quaternion.Lerp(transformCache.rotation, rotation.ToQuaternion(), Time.deltaTime * DELTA_TIME_FACTOR);
+                    transformCache.localScale = Vector3.Lerp(transformCache.localScale, localScale.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
                     return;
                 } else if (rb.interpolation == TSRigidBody.InterpolateMode.Extrapolate) {
-                    transform.position = (position + rb.tsCollider.Body.TSLinearVelocity * Time.deltaTime * DELTA_TIME_FACTOR).ToVector();
-                    transform.rotation = Quaternion.Lerp(transform.rotation, rotation.ToQuaternion(), Time.deltaTime * DELTA_TIME_FACTOR);
-                    transform.localScale = Vector3.Lerp(transform.localScale, localScale.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
+                    transformCache.position = (position + rb.tsCollider.Body.TSLinearVelocity * Time.deltaTime * DELTA_TIME_FACTOR).ToVector();
+                    transformCache.rotation = Quaternion.Lerp(transformCache.rotation, rotation.ToQuaternion(), Time.deltaTime * DELTA_TIME_FACTOR);
+                    transformCache.localScale = Vector3.Lerp(transformCache.localScale, localScale.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
                     return;
                 }
 			}
 
-            transform.position = position.ToVector();
-            transform.rotation = rotation.ToQuaternion();
-            transform.localPosition = localPosition.ToVector();
-            transform.localRotation = localRotation.ToQuaternion();
-            transform.localScale = localScale.ToVector();
-            _lossyScale = transform.lossyScale.ToTSVector();
+            transformCache.position = position.ToVector();
+            transformCache.rotation = rotation.ToQuaternion();
+            transformCache.localScale = localScale.ToVector();
+            _lossyScale = transformCache.lossyScale.ToTSVector();
         }
 
         private void UpdateChildTransform()

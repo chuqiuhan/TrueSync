@@ -286,8 +286,8 @@ MonoBehaviour:
   localOwner:
     id: 0
     name: 
-  xSize: 5
-  ySize: 1
+  xSize: 1
+  ySize: 3
   zSize: 1
   xGap:
     _serializedValue: 429496736
@@ -295,7 +295,7 @@ MonoBehaviour:
     _serializedValue: 429496736
   zGap:
     _serializedValue: 429496736
-  obj: {fileID: 112066, guid: 435fa2cb799997c46a75eea40a87eaba, type: 2}
+  obj: {fileID: 1713222203251780, guid: 38f3a346ca734814ea5f055c2b33224d, type: 2}
 --- !u!4 &471511823
 Transform:
   m_ObjectHideFlags: 0
@@ -320,7 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d00a06a6dc244546bf2fa2a7a5645f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxLogCount: 5000
+  _maxLogCount: 50000
 --- !u!1 &1753041245
 GameObject:
   m_ObjectHideFlags: 0

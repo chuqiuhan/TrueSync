@@ -63,11 +63,6 @@ public class StackDropTest : TrueSyncBehaviour
             rotationCheckSum += (tTransform.rotation.x + tTransform.rotation.y + tTransform.rotation.z + tTransform.rotation.w);
         }
 
-        Debug.Log("frame :" + frame + " positionCheckSum: " + positionCheckSum.ToString("F8") + " rotationCheckSum: " + rotationCheckSum.ToString("F8"));
-    }
-
-    public void OnSyncedCollisionEnter(TSCollision collision)
-    {
-        Debug.Log("");
+        //Debug.Log("frame :" + frame + " positionCheckSum: " + positionCheckSum.ToString("F8") + " rotationCheckSum: " + rotationCheckSum.ToString("F8"));
     }
 }

@@ -1,9 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace TrueSync
 {
-	public abstract class ResourcePool
+    /// <summary>
+    /// https://stackoverflow.com/questions/6582259/fast-creation-of-objects-instead-of-activator-createinstancetype
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public static class New<T>
+    {
+        public static readonly Func<T> Instance = Expression.Lambda<Func<T>>(Expression.New(typeof(T))).Compile();
+    }
+
+    public abstract class ResourcePool
 	{
 		protected bool fresh = true;
 
@@ -28,7 +38,7 @@ namespace TrueSync
 	{
 		protected Stack<T> stack = new Stack<T>(10);
 
-		public int Count
+        public int Count
 		{
 			get
 			{
@@ -69,9 +79,9 @@ namespace TrueSync
             return t;
         }
 
-		protected virtual T NewInstance()
-		{
-			return Activator.CreateInstance<T>();
-		}
-	}
+        protected virtual T NewInstance()
+        {
+            return New<T>.Instance();
+        }
+    }
 }

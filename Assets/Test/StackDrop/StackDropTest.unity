@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 471511822}
   - component: {fileID: 471511824}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Dropper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,16 +286,16 @@ MonoBehaviour:
   localOwner:
     id: 0
     name: 
-  xSize: 1
-  ySize: 3
-  zSize: 1
+  xSize: 5
+  ySize: 5
+  zSize: 5
   xGap:
     _serializedValue: 429496736
   yGap:
     _serializedValue: 429496736
   zGap:
     _serializedValue: 429496736
-  obj: {fileID: 1713222203251780, guid: 38f3a346ca734814ea5f055c2b33224d, type: 2}
+  obj: {fileID: 1597555348775142, guid: b849546adf72bab419ab4ca99a794000, type: 2}
 --- !u!4 &471511823
 Transform:
   m_ObjectHideFlags: 0

@@ -2496,59 +2496,59 @@ namespace C5
                 nodes[i++] = n;
                 n = n.next;
             }
-            //Logger.Log("###");
+            ////Logger.Log("###");
             foreach (LinkedList<T> view in views)
             {
                 if (!view.isValid)
                 {
-                    Logger.Log(string.Format("Invalid view(hash {0}, offset {1}, size {2})",
-                      view.GetHashCode(), view.offset, view.size));
+                    //Logger.Log(string.Format("Invalid view(hash {0}, offset {1}, size {2})",
+                    //  view.GetHashCode(), view.offset, view.size));
                     retval = false;
                     continue;
                 }
                 if (view.Offset > size || view.Offset < 0)
                 {
-                    Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), Offset > underlying.size ({2})",
-                      view.GetHashCode(), view.offset, view.size, size));
+                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), Offset > underlying.size ({2})",
+                    //  view.GetHashCode(), view.offset, view.size, size));
                     retval = false;
                 }
                 else if (view.startsentinel != nodes[view.Offset])
                 {
-                    Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), startsentinel {3} should be {4}",
-                      view.GetHashCode(), view.offset, view.size,
-                      view.startsentinel + " " + view.startsentinel.GetHashCode(),
-                      nodes[view.Offset] + " " + nodes[view.Offset].GetHashCode()));
+                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), startsentinel {3} should be {4}",
+                    //  view.GetHashCode(), view.offset, view.size,
+                    //  view.startsentinel + " " + view.startsentinel.GetHashCode(),
+                    //  nodes[view.Offset] + " " + nodes[view.Offset].GetHashCode()));
                     retval = false;
                 }
                 if (view.Offset + view.size > size || view.Offset + view.size < 0)
                 {
-                    Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), end index > underlying.size ({3})",
-                      view.GetHashCode(), view.offset, view.size, size));
+                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), end index > underlying.size ({3})",
+                    //  view.GetHashCode(), view.offset, view.size, size));
                     retval = false;
                 }
                 else if (view.endsentinel != nodes[view.Offset + view.size + 1])
                 {
-                    Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), endsentinel {3} should be {4}",
-                      view.GetHashCode(), view.offset, view.size,
-                      view.endsentinel + " " + view.endsentinel.GetHashCode(),
-                      nodes[view.Offset + view.size + 1] + " " + nodes[view.Offset + view.size + 1].GetHashCode()));
+                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), endsentinel {3} should be {4}",
+                    //  view.GetHashCode(), view.offset, view.size,
+                    //  view.endsentinel + " " + view.endsentinel.GetHashCode(),
+                    //  nodes[view.Offset + view.size + 1] + " " + nodes[view.Offset + view.size + 1].GetHashCode()));
                     retval = false;
                 }
                 if (view.views != views)
                 {
-                    Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), wrong views list {3} <> {4}",
-                      view.GetHashCode(), view.offset, view.size, view.views.GetHashCode(), views.GetHashCode()));
+                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), wrong views list {3} <> {4}",
+                    //  view.GetHashCode(), view.offset, view.size, view.views.GetHashCode(), views.GetHashCode()));
                     retval = false;
                 }
                 if (view.underlying != this)
                 {
-                    Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), wrong underlying {3} <> this {4}",
-                      view.GetHashCode(), view.offset, view.size, view.underlying.GetHashCode(), GetHashCode()));
+                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), wrong underlying {3} <> this {4}",
+                    //  view.GetHashCode(), view.offset, view.size, view.underlying.GetHashCode(), GetHashCode()));
                     retval = false;
                 }
                 if (view.stamp != stamp)
                 {
-                    //Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), wrong stamp view:{2} underlying: {3}", view.GetHashCode(),view.offset, view.size, view.stamp, stamp));
+                    ////Logger.Log(string.Format("Bad view(hash {0}, offset {1}, size {2}), wrong stamp view:{2} underlying: {3}", view.GetHashCode(),view.offset, view.size, view.stamp, stamp));
                     //retval = false;
                 }
             }
@@ -2570,7 +2570,7 @@ namespace C5
 
             /*if (underlying != null && underlying.stamp != stamp)
             {
-              Logger.Log("underlying != null && underlying.stamp({0}) != stamp({1})", underlying.stamp, stamp);
+              //Logger.Log("underlying != null && underlying.stamp({0}) != stamp({1})", underlying.stamp, stamp);
               retval = false;
             }*/
 
@@ -2582,13 +2582,13 @@ namespace C5
 
             if (startsentinel == null)
             {
-                Logger.Log("startsentinel == null");
+                //Logger.Log("startsentinel == null");
                 retval = false;
             }
 
             if (endsentinel == null)
             {
-                Logger.Log("endsentinel == null");
+                //Logger.Log("endsentinel == null");
                 retval = false;
             }
 
@@ -2596,20 +2596,20 @@ namespace C5
             {
                 if (startsentinel != null && startsentinel.next != endsentinel)
                 {
-                    Logger.Log("size == 0 but startsentinel.next != endsentinel");
+                    //Logger.Log("size == 0 but startsentinel.next != endsentinel");
                     retval = false;
                 }
 
                 if (endsentinel != null && endsentinel.prev != startsentinel)
                 {
-                    Logger.Log("size == 0 but endsentinel.prev != startsentinel");
+                    //Logger.Log("size == 0 but endsentinel.prev != startsentinel");
                     retval = false;
                 }
             }
 
             if (startsentinel == null)
             {
-                Logger.Log("NULL startsentinel");
+                //Logger.Log("NULL startsentinel");
                 return retval;
             }
 
@@ -2621,7 +2621,7 @@ namespace C5
                 count++;
                 if (node.prev != prev)
                 {
-                    Logger.Log(string.Format("Bad backpointer at node {0}", count));
+                    //Logger.Log(string.Format("Bad backpointer at node {0}", count));
                     retval = false;
                 }
 
@@ -2629,14 +2629,14 @@ namespace C5
                 node = node.next;
                 if (node == null)
                 {
-                    Logger.Log(string.Format("Null next pointer at node {0}", count));
+                    //Logger.Log(string.Format("Null next pointer at node {0}", count));
                     return false;
                 }
             }
 
             if (count != size)
             {
-                Logger.Log(string.Format("size={0} but enumeration gives {1} nodes ", size, count));
+                //Logger.Log(string.Format("size={0} but enumeration gives {1} nodes ", size, count));
                 retval = false;
             }
 

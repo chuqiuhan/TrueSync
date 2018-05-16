@@ -1089,7 +1089,7 @@ namespace C5
 
             if (size > array.Length)
             {
-                Logger.Log(string.Format("Bad size ({0}) > array.Length ({1})", size, array.Length));
+                //Logger.Log(string.Format("Bad size ({0}) > array.Length ({1})", size, array.Length));
                 return false;
             }
 
@@ -1097,13 +1097,13 @@ namespace C5
             {
                 if ((object)(array[i]) == null)
                 {
-                    Logger.Log(string.Format("Bad element: null at index {0}", i));
+                    //Logger.Log(string.Format("Bad element: null at index {0}", i));
                     return false;
                 }
 
                 if (i > 0 && _comparer.Compare(array[i], array[i - 1]) <= 0)
                 {
-                    Logger.Log(string.Format("Inversion at index {0}", i));
+                    //Logger.Log(string.Format("Inversion at index {0}", i));
                     retval = false;
                 }
             }

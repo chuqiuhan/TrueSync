@@ -533,18 +533,18 @@ namespace C5
             {
                 if (comparer.Compare(min, first) > 0)
                 {
-                    Logger.Log(string.Format("Cell {0}: parent.first({1}) > first({2})  [size={3}]", i, min, first, size));
+                    //Logger.Log(string.Format("Cell {0}: parent.first({1}) > first({2})  [size={3}]", i, min, first, size));
                     retval = false;
                 }
 
                 if (comparer.Compare(first, max) > 0)
                 {
-                    Logger.Log(string.Format("Cell {0}: first({1}) > parent.last({2})  [size={3}]", i, first, max, size));
+                    //Logger.Log(string.Format("Cell {0}: first({1}) > parent.last({2})  [size={3}]", i, first, max, size));
                     retval = false;
                 }
                 if (interval.firsthandle != null && interval.firsthandle.index != 2 * i)
                 {
-                    Logger.Log(string.Format("Cell {0}: firsthandle.index({1}) != 2*cell({2})  [size={3}]", i, interval.firsthandle.index, 2 * i, size));
+                    //Logger.Log(string.Format("Cell {0}: firsthandle.index({1}) != 2*cell({2})  [size={3}]", i, interval.firsthandle.index, 2 * i, size));
                     retval = false;
                 }
 
@@ -554,29 +554,29 @@ namespace C5
             {
                 if (comparer.Compare(min, first) > 0)
                 {
-                    Logger.Log(string.Format("Cell {0}: parent.first({1}) > first({2})  [size={3}]", i, min, first, size));
+                    //Logger.Log(string.Format("Cell {0}: parent.first({1}) > first({2})  [size={3}]", i, min, first, size));
                     retval = false;
                 }
 
                 if (comparer.Compare(first, last) > 0)
                 {
-                    Logger.Log(string.Format("Cell {0}: first({1}) > last({2})  [size={3}]", i, first, last, size));
+                    //Logger.Log(string.Format("Cell {0}: first({1}) > last({2})  [size={3}]", i, first, last, size));
                     retval = false;
                 }
 
                 if (comparer.Compare(last, max) > 0)
                 {
-                    Logger.Log(string.Format("Cell {0}: last({1}) > parent.last({2})  [size={3}]", i, last, max, size));
+                    //Logger.Log(string.Format("Cell {0}: last({1}) > parent.last({2})  [size={3}]", i, last, max, size));
                     retval = false;
                 }
                 if (interval.firsthandle != null && interval.firsthandle.index != 2 * i)
                 {
-                    Logger.Log(string.Format("Cell {0}: firsthandle.index({1}) != 2*cell({2})  [size={3}]", i, interval.firsthandle.index, 2 * i, size));
+                    //Logger.Log(string.Format("Cell {0}: firsthandle.index({1}) != 2*cell({2})  [size={3}]", i, interval.firsthandle.index, 2 * i, size));
                     retval = false;
                 }
                 if (interval.lasthandle != null && interval.lasthandle.index != 2 * i + 1)
                 {
-                    Logger.Log(string.Format("Cell {0}: lasthandle.index({1}) != 2*cell+1({2})  [size={3}]", i, interval.lasthandle.index, 2 * i + 1, size));
+                    //Logger.Log(string.Format("Cell {0}: lasthandle.index({1}) != 2*cell+1({2})  [size={3}]", i, interval.lasthandle.index, 2 * i + 1, size));
                     retval = false;
                 }
 

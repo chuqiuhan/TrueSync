@@ -147,7 +147,7 @@ namespace C5
 
         void expand()
         {
-            Logger.Log(string.Format(string.Format("Expand to {0} bits", bits + 1)));
+            //Logger.Log(string.Format(string.Format("Expand to {0} bits", bits + 1)));
             resize(bits + 1);
         }
 
@@ -156,7 +156,7 @@ namespace C5
         {
             if (bits > 3)
             {
-                Logger.Log(string.Format(string.Format("Shrink to {0} bits", bits - 1)));
+                //Logger.Log(string.Format(string.Format("Shrink to {0} bits", bits - 1)));
                 resize(bits - 1);
             }
         }
@@ -164,7 +164,7 @@ namespace C5
 
         void resize(int bits)
         {
-            Logger.Log(string.Format(string.Format("Resize to {0} bits", bits)));
+            //Logger.Log(string.Format(string.Format("Resize to {0} bits", bits)));
             this.bits = bits;
             bitsc = 32 - bits;
             indexmask = (1 << bits) - 1;
@@ -187,7 +187,7 @@ namespace C5
 
             table = newtable;
             resizethreshhold = (int)(table.Length * fillfactor);
-            Logger.Log(string.Format(string.Format("Resize to {0} bits done", bits)));
+            //Logger.Log(string.Format(string.Format("Resize to {0} bits done", bits)));
         }
 
         /// <summary>
@@ -831,22 +831,22 @@ namespace C5
 
             if (bitsc != 32 - bits)
             {
-                Logger.Log(string.Format("bitsc != 32 - bits ({0}, {1})", bitsc, bits));
+                //Logger.Log(string.Format("bitsc != 32 - bits ({0}, {1})", bitsc, bits));
                 retval = false;
             }
             if (indexmask != (1 << bits) - 1)
             {
-                Logger.Log(string.Format("indexmask != (1 << bits) - 1 ({0}, {1})", indexmask, bits));
+                //Logger.Log(string.Format("indexmask != (1 << bits) - 1 ({0}, {1})", indexmask, bits));
                 retval = false;
             }
             if (table.Length != indexmask + 1)
             {
-                Logger.Log(string.Format("table.Length != indexmask + 1 ({0}, {1})", table.Length, indexmask));
+                //Logger.Log(string.Format("table.Length != indexmask + 1 ({0}, {1})", table.Length, indexmask));
                 retval = false;
             }
             if (bitsc != 32 - bits)
             {
-                Logger.Log(string.Format("resizethreshhold != (int)(table.Length * fillfactor) ({0}, {1}, {2})", resizethreshhold, table.Length, fillfactor));
+                //Logger.Log(string.Format("resizethreshhold != (int)(table.Length * fillfactor) ({0}, {1}, {2})", resizethreshhold, table.Length, fillfactor));
                 retval = false;
             }
 
@@ -858,7 +858,7 @@ namespace C5
                 {
                     if (i != hv2i(b.hashval))
                     {
-                        Logger.Log(string.Format("Bad cell item={0}, hashval={1}, index={2}, level={3}", b.item, b.hashval, i, level));
+                        //Logger.Log(string.Format("Bad cell item={0}, hashval={1}, index={2}, level={3}", b.item, b.hashval, i, level));
                         retval = false;
                     }
 
@@ -870,7 +870,7 @@ namespace C5
 
             if (count != size)
             {
-                Logger.Log(string.Format("size({0}) != count({1})", size, count));
+                //Logger.Log(string.Format("size({0}) != count({1})", size, count));
                 retval = false;
             }
 

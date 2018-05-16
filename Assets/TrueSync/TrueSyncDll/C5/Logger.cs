@@ -14,7 +14,7 @@ namespace C5
         /// </summary>
         /// <example>The following is an example of assigning a observer to the logging module:
         ///   <code>
-        ///     Logger.Log = x => Console.WriteLine(x);
+        ///     //Logger.Log = x => Console.WriteLine(x);
         ///   </code>
         /// </example>
         /// <remarks>

@@ -1867,19 +1867,19 @@ namespace C5
 
             if (underlyingsize > array.Length)
             {
-                Logger.Log(string.Format("underlyingsize ({0}) > array.Length ({1})", size, array.Length));
+                //Logger.Log(string.Format("underlyingsize ({0}) > array.Length ({1})", size, array.Length));
                 return false;
             }
 
             if (offsetField + size > underlyingsize)
             {
-                Logger.Log(string.Format("offset({0})+size({1}) > underlyingsize ({2})", offsetField, size, underlyingsize));
+                //Logger.Log(string.Format("offset({0})+size({1}) > underlyingsize ({2})", offsetField, size, underlyingsize));
                 return false;
             }
 
             if (offsetField < 0)
             {
-                Logger.Log(string.Format("offset({0}) < 0", offsetField));
+                //Logger.Log(string.Format("offset({0}) < 0", offsetField));
                 return false;
             }
 
@@ -1887,7 +1887,7 @@ namespace C5
             {
                 if ((object)(array[i]) == null)
                 {
-                    Logger.Log(string.Format("Bad element: null at (base)index {0}", i));
+                    //Logger.Log(string.Format("Bad element: null at (base)index {0}", i));
                     retval = false;
                 }
             }
@@ -1896,7 +1896,7 @@ namespace C5
             {
                 if (!equals(array[i], default(T)))
                 {
-                    Logger.Log(string.Format("Bad element: != default(T) at (base)index {0}", i));
+                    //Logger.Log(string.Format("Bad element: != default(T) at (base)index {0}", i));
                     retval = false;
                 }
             }
@@ -1908,7 +1908,7 @@ namespace C5
                     {
                         if (u.array != v.array)
                         {
-                            Logger.Log(string.Format("View from {0} of length has different base array than the underlying list", v.offsetField, v.size));
+                            //Logger.Log(string.Format("View from {0} of length has different base array than the underlying list", v.offsetField, v.size));
                             retval = false;
                         }
                     }

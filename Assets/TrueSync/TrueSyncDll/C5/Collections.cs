@@ -711,7 +711,7 @@ namespace C5
                       int[] b = a;
                       if (set.FindOrAdd(h, ref b))
                       {
-                          Logger.Log(string.Format("Code {5}, Pair ({1},{2}) number {0} matched other pair ({3},{4})", set.Count, a[0], a[1], b[0], b[1], h));
+                          //Logger.Log(string.Format("Code {5}, Pair ({1},{2}) number {0} matched other pair ({3},{4})", set.Count, a[0], a[1], b[0], b[1], h));
                       }
                   }
                   */
@@ -1262,7 +1262,7 @@ namespace C5
 
             if (size > array.Length)
             {
-                Logger.Log(string.Format("Bad size ({0}) > array.Length ({1})", size, array.Length));
+                //Logger.Log(string.Format("Bad size ({0}) > array.Length ({1})", size, array.Length));
                 return false;
             }
 
@@ -1270,7 +1270,7 @@ namespace C5
             {
                 if ((object)(array[i]) == null)
                 {
-                    Logger.Log(string.Format("Bad element: null at index {0}", i));
+                    //Logger.Log(string.Format("Bad element: null at index {0}", i));
                     return false;
                 }
             }

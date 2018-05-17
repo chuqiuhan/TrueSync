@@ -231,7 +231,7 @@ namespace TrueSync {
             TrueSyncConfig activeConfig = ActiveConfig;
 
             lockstep = AbstractLockstep.NewInstance(
-                lockedTimeStep.AsFloat(),
+                lockedTimeStep,
                 communicator,
                 PhysicsManager.instance,
                 activeConfig.syncWindow,

@@ -131,6 +131,7 @@ namespace TrueSync.Physics3D {
         }
 
         TSVector[] vecs = new TSVector[3];
+        public TSVector[] Vertices { get { return vecs; } }
 
         /// <summary>
         /// SupportMapping. Finds the point in the shape furthest away from the given direction.

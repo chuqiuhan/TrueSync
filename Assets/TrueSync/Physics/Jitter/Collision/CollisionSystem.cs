@@ -270,6 +270,16 @@ namespace TrueSync.Physics3D {
 
             if (!b1IsMulti && !b2IsMulti)
             {
+                //if (SphereSphereCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
+                //    ref body2.orientation, ref body1.position, ref body2.position,
+                //    out point, out normal, out penetration))
+                //{
+                //    //normal = JVector.Up;
+                //    //UnityEngine.Debug.Log("FINAL  --- >>> normal: " + normal);
+                //    TSVector point1, point2;
+                //    FindSupportPoints(body1, body2, body1.Shape, body2.Shape, ref point, ref normal, out point1, out point2);
+                //    RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
+                //}
                 if (XenoCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
                     ref body2.orientation, ref body1.position, ref body2.position,
                     out point, out normal, out penetration))
@@ -303,7 +313,7 @@ namespace TrueSync.Physics3D {
 
                 }
 
-				//UnityEngine.Debug.Log("-----------------------: " + normal);
+                //UnityEngine.Debug.Log("-----------------------: " + normal);
             }
             else if (b1IsMulti && b2IsMulti)
             {
@@ -401,46 +411,56 @@ namespace TrueSync.Physics3D {
                 {
                     ms.SetCurrentShape(i);
 
-                    if (XenoCollide.Detect(ms, b2.Shape, ref b1.orientation,
+                    if (SphereTriangleCollide.Detect(ms, b2.Shape, ref b1.orientation,
                         ref b2.orientation, ref b1.position, ref b2.position,
                         out point, out normal, out penetration))
                     {
                         TSVector point1, point2;
                         FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
 
-                        if (useTerrainNormal && ms is TerrainShape)
-                        {
-                            (ms as TerrainShape).CollisionNormal(out normal);
-                            TSVector.Transform(ref normal, ref b1.orientation, out normal);
-                        }
-                        else if (useTriangleMeshNormal && ms is TriangleMeshShape)
-                        {
-                            (ms as TriangleMeshShape).CollisionNormal(out normal);
-                            TSVector.Transform(ref normal, ref b1.orientation, out normal);
-                        }
-
                         RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
                     }
-                    else if (speculative)
-                    {
-                        TSVector hit1, hit2;
 
-                        if (GJKCollide.ClosestPoints(ms, b2.Shape, ref b1.orientation, ref b2.orientation,
-                            ref b1.position, ref b2.position, out hit1, out hit2, out normal))
-                        {
-                            TSVector delta = hit2 - hit1;
+                    //if (XenoCollide.Detect(ms, b2.Shape, ref b1.orientation,
+                    //    ref b2.orientation, ref b1.position, ref b2.position,
+                    //    out point, out normal, out penetration))
+                    //{
+                    //    TSVector point1, point2;
+                    //    FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
 
-                            if (delta.sqrMagnitude < (body1.sweptDirection - body2.sweptDirection).sqrMagnitude)
-                            {
-                                penetration = delta * normal;
+                    //    if (useTerrainNormal && ms is TerrainShape)
+                    //    {
+                    //        (ms as TerrainShape).CollisionNormal(out normal);
+                    //        TSVector.Transform(ref normal, ref b1.orientation, out normal);
+                    //    }
+                    //    else if (useTriangleMeshNormal && ms is TriangleMeshShape)
+                    //    {
+                    //        (ms as TriangleMeshShape).CollisionNormal(out normal);
+                    //        TSVector.Transform(ref normal, ref b1.orientation, out normal);
+                    //    }
 
-                                if (penetration < FP.Zero)
-                                {
-                                    RaiseCollisionDetected(b1, b2, ref hit1, ref hit2, ref normal, penetration);
-                                }
-                            }
-                        }
-                    }
+                    //    RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
+                    //}
+                    //else if (speculative)
+                    //{
+                    //    TSVector hit1, hit2;
+
+                    //    if (GJKCollide.ClosestPoints(ms, b2.Shape, ref b1.orientation, ref b2.orientation,
+                    //        ref b1.position, ref b2.position, out hit1, out hit2, out normal))
+                    //    {
+                    //        TSVector delta = hit2 - hit1;
+
+                    //        if (delta.sqrMagnitude < (body1.sweptDirection - body2.sweptDirection).sqrMagnitude)
+                    //        {
+                    //            penetration = delta * normal;
+
+                    //            if (penetration < FP.Zero)
+                    //            {
+                    //                RaiseCollisionDetected(b1, b2, ref hit1, ref hit2, ref normal, penetration);
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
 
                 ms.ReturnWorkingClone();

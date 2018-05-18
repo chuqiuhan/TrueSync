@@ -106,13 +106,12 @@ namespace TrueSync.Physics3D {
     {
         public bool Equals(ArbiterKey x, ArbiterKey y)
         {
-            return (x.body1.Equals(y.body1) && x.body2.Equals(y.body2) ||
-                x.body1.Equals(y.body2) && x.body2.Equals(y.body1));
+            return x.Equals(y);
         }
 
         public int GetHashCode(ArbiterKey obj)
         {
-            return obj.body1.GetHashCode() + obj.body2.GetHashCode();
+            return obj.GetHashCode();
         }
     }
 
@@ -122,8 +121,6 @@ namespace TrueSync.Physics3D {
 	public class ArbiterMap : IEnumerable
     {
         private Dictionary<ArbiterKey, Arbiter> dictionaryKeys = new Dictionary<ArbiterKey, Arbiter>(new ArbiterKeyComparer());
-
-        private HashList<int> keysSortedList = new HashList<int>();
 
         public ArbiterKey lookUpKey;
 
@@ -145,13 +142,7 @@ namespace TrueSync.Physics3D {
         public bool LookUpArbiter(RigidBody body1, RigidBody body2, out Arbiter arbiter)
         {
             lookUpKey.SetBodies(body1, body2);
-            if (!dictionaryKeys.ContainsKey(lookUpKey)) {
-                arbiter = null;
-                return false;
-            }            
-
-            arbiter = dictionaryKeys[lookUpKey];
-			return true;
+            return dictionaryKeys.TryGetValue(lookUpKey, out arbiter);
         }
 
 		public Dictionary<ArbiterKey, Arbiter>.ValueCollection Arbiters
@@ -161,20 +152,17 @@ namespace TrueSync.Physics3D {
 
         internal void Add(ArbiterKey key, Arbiter arbiter)
         {
-            keysSortedList.Add(key.GetHashCode());
             dictionaryKeys.Add(key, arbiter);
         }
 
         internal void Clear()
         {
-            keysSortedList.Clear();
             dictionaryKeys.Clear();
         }
 
         internal void Remove(Arbiter arbiter)
         {
             lookUpKey.SetBodies(arbiter.body1, arbiter.body2);
-            keysSortedList.Remove(lookUpKey.GetHashCode());
             dictionaryKeys.Remove(lookUpKey);
         }
 

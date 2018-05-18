@@ -8,13 +8,13 @@ namespace TrueSync.Physics3D
     {
         public static bool Detect(ISupportMappable support1, ISupportMappable support2, ref TSMatrix orientation1,
             ref TSMatrix orientation2, ref TSVector position1, ref TSVector position2,
-            out TSVector point, out TSVector normal, out FP penetration)
+            out TSVector point, out TSVector point1, out TSVector point2, out TSVector normal, out FP penetration)
         {
             // Used variables
             TSVector v01, v02;
 
             // Initialization of the output
-            point = normal = TSVector.zero;
+            point = point1 = point2 = normal = TSVector.zero;
             penetration = FP.Zero;
 
             // Get the center of shape1 in world coordinates -> v01
@@ -35,7 +35,7 @@ namespace TrueSync.Physics3D
             FP r = sphere1.radius + sphere2.radius;
             if (dot <= r*r)
             {
-                ClosestPointSphereSphere(v01, sphere1.radius, v02, sphere2.radius, out normal, out point);
+                ClosestPointSphereSphere(v01, sphere1.radius, v02, sphere2.radius, out normal, out point, out point1, out point2);
                 TSVector.Negate(ref normal, out normal);
                 penetration = r - TSMath.Sqrt(dot);
                 return true;
@@ -58,7 +58,7 @@ namespace TrueSync.Physics3D
         /// is the 'closest' point of intersection. This can also be considered is the deepest point of
         /// intersection.
         /// </remarks>
-        public static void ClosestPointSphereSphere(TSVector center1, FP r1, TSVector center2, FP r2, out TSVector normal, out TSVector result)
+        public static void ClosestPointSphereSphere(TSVector center1, FP r1, TSVector center2, FP r2, out TSVector normal, out TSVector result, out TSVector point1, out TSVector point2)
         {
             //Source: Jorgy343
             //Reference: None
@@ -67,6 +67,9 @@ namespace TrueSync.Physics3D
             TSVector.Subtract(ref center2, ref center1, out result);
             result.Normalize();
             normal = result;
+
+            point1 = normal * r1 + center1;
+            point2 = TSVector.Negate(normal) * r2 + center2;
 
             //Multiply the unit direction by the first sphere's radius to get a vector
             //the length of the first sphere.

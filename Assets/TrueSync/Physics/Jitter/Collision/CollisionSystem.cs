@@ -270,14 +270,14 @@ namespace TrueSync.Physics3D {
 
             if (!b1IsMulti && !b2IsMulti)
             {
+                TSVector point1, point2;
                 if (SphereSphereCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
                     ref body2.orientation, ref body1.position, ref body2.position,
-                    out point, out normal, out penetration))
+                    out point, out point1, out point2, out normal, out penetration))
                 {
                     //normal = JVector.Up;
                     //UnityEngine.Debug.Log("FINAL  --- >>> normal: " + normal);
-                    TSVector point1, point2;
-                    FindSupportPoints(body1, body2, body1.Shape, body2.Shape, ref point, ref normal, out point1, out point2);
+                    //FindSupportPoints(body1, body2, body1.Shape, body2.Shape, ref point, ref normal, out point1, out point2);
                     RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
                 }
                 //if (XenoCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
@@ -411,12 +411,12 @@ namespace TrueSync.Physics3D {
                 {
                     ms.SetCurrentShape(i);
 
+                    TSVector point1, point2;
                     if (SphereTriangleCollide.Detect(ms, b2.Shape, ref b1.orientation,
                         ref b2.orientation, ref b1.position, ref b2.position,
-                        out point, out normal, out penetration))
+                        out point, out point1, out point2, out normal, out penetration))
                     {
-                        TSVector point1, point2;
-                        FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
+                        //FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
 
                         RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
                     }

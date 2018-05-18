@@ -8,13 +8,13 @@ namespace TrueSync.Physics3D
     {
         public static bool Detect(ISupportMappable support1, ISupportMappable support2, ref TSMatrix orientation1,
             ref TSMatrix orientation2, ref TSVector position1, ref TSVector position2,
-            out TSVector point, out TSVector normal, out FP penetration)
+            out TSVector point, out TSVector point1, out TSVector point2, out TSVector normal, out FP penetration)
         {
             // Used variables
             TSVector v01, v02;
 
             // Initialization of the output
-            point = normal = TSVector.zero;
+            point = point1 = point2 = normal = TSVector.zero;
             penetration = FP.Zero;
 
             // Get the center of shape1 in world coordinates -> v01
@@ -50,6 +50,8 @@ namespace TrueSync.Physics3D
             if (dot <= sphere.Radius * sphere.Radius)
             {
                 normal = TSVector.Cross(TSVector.Subtract(vertices[0], vertices[1]), TSVector.Subtract(vertices[0], vertices[2])).normalized;
+                point1 = point;
+                point2 = v02 + TSVector.Negate(normal) * sphere.radius;
                 penetration = sphere.Radius - TSMath.Sqrt(dot);
                 return true;
             }

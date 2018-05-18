@@ -211,6 +211,11 @@ namespace TrueSync
         public override string ToString() {
             return string.Format("({0:f1}, {1:f1}, {2:f1})", x.AsFloat(), y.AsFloat(), z.AsFloat());
         }
+
+        public string ToString(string format)
+        {
+            return string.Format("({0}, {1}, {2})", x.ToString(format), y.ToString(format), z.ToString(format));
+        }
         #endregion
 
         /// <summary>

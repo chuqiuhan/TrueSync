@@ -24,7 +24,7 @@ public class StackDropTest : TrueSyncBehaviour
     [SerializeField]
     private GameObject obj;
 
-    private List<GameObject> objStack = new List<GameObject>();
+    private HashList<GameObject> objStack = new HashList<GameObject>();
 
     private int frame = 0;
 
@@ -44,6 +44,7 @@ public class StackDropTest : TrueSyncBehaviour
                     tMaterial.restitution = 0;
                     tMaterial.friction = 1;
                     objStack.Add(tObj);
+                    tObj.SetActive(false);
                 }
             }
         }
@@ -58,9 +59,12 @@ public class StackDropTest : TrueSyncBehaviour
         for (int i=0; i<objSize; i++)
         {
             GameObject obj = objStack[i];
+            obj.SetActive(true);
             TSTransform tTransform = obj.GetComponent<TSTransform>();
-            positionCheckSum += (tTransform.position.x + tTransform.position.y + tTransform.position.z);
-            rotationCheckSum += (tTransform.rotation.x + tTransform.rotation.y + tTransform.rotation.z + tTransform.rotation.w);
+            TSVector position = tTransform.position;
+            TSQuaternion rotation = tTransform.rotation;
+            positionCheckSum += (position.x + position.y + position.z);
+            rotationCheckSum += (rotation.x + rotation.y + rotation.z + rotation.w);
         }
 
         //Debug.Log("frame :" + frame + " positionCheckSum: " + positionCheckSum.ToString("F8") + " rotationCheckSum: " + rotationCheckSum.ToString("F8"));

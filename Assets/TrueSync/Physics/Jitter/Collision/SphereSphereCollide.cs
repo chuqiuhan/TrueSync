@@ -36,6 +36,7 @@ namespace TrueSync.Physics3D
             if (dot <= r*r)
             {
                 ClosestPointSphereSphere(v01, sphere1.radius, v02, sphere2.radius, out normal, out point);
+                TSVector.Negate(ref normal, out normal);
                 penetration = r - TSMath.Sqrt(dot);
                 return true;
             }
@@ -69,7 +70,7 @@ namespace TrueSync.Physics3D
 
             //Multiply the unit direction by the first sphere's radius to get a vector
             //the length of the first sphere.
-            result *= r1;
+            result *= r1/(r1+r2);
 
             //Add the first sphere's center to the direction to get a point on the first sphere.
             result += center1;

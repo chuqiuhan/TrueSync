@@ -53,9 +53,10 @@ namespace TrueSync.Physics3D {
         {
             this.octree = octree;
             UpdateShape();
+            this.shapeType = ShapeType.TriangleMesh;
         }
 
-        internal TriangleMeshShape() { }
+        internal TriangleMeshShape() { this.shapeType = ShapeType.TriangleMesh; }
 
  
         protected override Multishape CreateWorkingClone()

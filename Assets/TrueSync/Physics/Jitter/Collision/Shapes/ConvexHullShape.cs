@@ -42,6 +42,7 @@ namespace TrueSync.Physics3D {
         {
             this.vertices = vertices;
             UpdateShape();
+            this.shapeType = ShapeType.ConvexHull;
         }
 
         public TSVector Shift { get { return -1 * this.shifted; } }

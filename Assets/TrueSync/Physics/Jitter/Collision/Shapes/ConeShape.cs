@@ -52,6 +52,7 @@ namespace TrueSync.Physics3D {
             this.radius = radius;
 
             this.UpdateShape();
+            this.shapeType = ShapeType.Cone;
         }
 
         public override void UpdateShape()

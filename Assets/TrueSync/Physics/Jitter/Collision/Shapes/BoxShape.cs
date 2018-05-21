@@ -47,6 +47,7 @@ namespace TrueSync.Physics3D {
         {
             this.size = size;
             this.UpdateShape();
+            this.shapeType = ShapeType.Box;
         }
 
         /// <summary>

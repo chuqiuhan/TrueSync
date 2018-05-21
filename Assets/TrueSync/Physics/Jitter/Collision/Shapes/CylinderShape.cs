@@ -51,6 +51,7 @@ namespace TrueSync.Physics3D {
             this.height = height;
             this.radius = radius;
             UpdateShape();
+            this.shapeType = ShapeType.Cylinder;
         }
 
         /// <summary>

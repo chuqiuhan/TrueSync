@@ -1,34 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace TrueSync.Physics3D
 {
-    public sealed class SphereTriangleCollide
+    public class SphereTrianglePair : CollisionPair
     {
-        public static bool Detect(ISupportMappable support1, ISupportMappable support2, ref TSMatrix orientation1,
-            ref TSMatrix orientation2, ref TSVector position1, ref TSVector position2,
+        public static ResourcePool<SphereTrianglePair> pool = new ResourcePool<SphereTrianglePair>();
+
+        public override bool IsColliding(ref TSMatrix orientation1, ref TSMatrix orientation2, ref TSVector position1, ref TSVector position2,
             out TSVector point, out TSVector point1, out TSVector point2, out TSVector normal, out FP penetration)
         {
             // Used variables
-            TSVector v01, v02;
+            TSVector center1, center2;
 
             // Initialization of the output
             point = point1 = point2 = normal = TSVector.zero;
             penetration = FP.Zero;
 
-            // Get the center of shape1 in world coordinates -> v01
-            support1.SupportCenter(out v01);
-            TSVector.Transform(ref v01, ref orientation1, out v01);
-            TSVector.Add(ref position1, ref v01, out v01);
+            TriangleMeshShape triangle = this.Shape1 as TriangleMeshShape;
+            SphereShape sphere = this.Shape2 as SphereShape;
 
-            // Get the center of shape2 in world coordinates -> v02
-            support2.SupportCenter(out v02);
-            TSVector.Transform(ref v02, ref orientation2, out v02);
-            TSVector.Add(ref position2, ref v02, out v02);
+            // Get the center of sphere in world coordinates -> center1
+            triangle.SupportCenter(out center1);
+            TSVector.Transform(ref center1, ref orientation1, out center1);
+            TSVector.Add(ref position1, ref center1, out center1);
 
-            TriangleMeshShape triangle = support1 as TriangleMeshShape;
-            SphereShape sphere = support2 as SphereShape;
+            // Get the center of triangle in world coordinates -> center2
+            sphere.SupportCenter(out center2);
+            TSVector.Transform(ref center2, ref orientation2, out center2);
+            TSVector.Add(ref position2, ref center2, out center2);
+
 
             TSVector[] vertices = triangle.Vertices;
             TSVector vertex0;
@@ -42,16 +43,16 @@ namespace TrueSync.Physics3D
             TSVector.Add(ref position1, ref vertex2, out vertex2);
 
 
-            ClosestPointPointTriangle(ref v02, ref vertex2, ref vertex1, ref vertex0, out point);
-            TSVector v = point - v02;
+            ClosestPointPointTriangle(ref center2, ref vertex0, ref vertex1, ref vertex2, out point);
+            TSVector v = point - center2;
 
             FP dot = TSVector.Dot(ref v, ref v);
 
             if (dot <= sphere.Radius * sphere.Radius)
             {
-                normal = TSVector.Cross(TSVector.Subtract(vertices[0], vertices[1]), TSVector.Subtract(vertices[0], vertices[2])).normalized;
+                normal = TSVector.Cross(TSVector.Subtract(vertex0, vertex1), TSVector.Subtract(vertex0, vertex2)).normalized;
                 point1 = point;
-                point2 = v02 + TSVector.Negate(normal) * sphere.radius;
+                point2 = center2 + TSVector.Negate(normal) * sphere.radius;
                 penetration = sphere.Radius - TSMath.Sqrt(dot);
                 return true;
             }
@@ -138,6 +139,5 @@ namespace TrueSync.Physics3D
             FP w2 = vc * denom;
             result = vertex1 + ab * v2 + ac * w2; //= u*vertex1 + v*vertex2 + w*vertex3, u = va * denom = 1.0f - v - w
         }
-
     }
 }

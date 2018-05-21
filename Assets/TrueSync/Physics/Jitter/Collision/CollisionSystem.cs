@@ -81,6 +81,30 @@ namespace TrueSync.Physics3D {
     /// <returns>If false is returned the collision information is dropped.</returns>
     public delegate bool RaycastCallback(RigidBody body,TSVector normal, FP fraction);
 
+    public abstract class CollisionPair
+    {
+        /// <summary>
+        /// The first body.
+        /// </summary>
+        public Shape Shape1;
+        /// <summary>
+        /// The second body.
+        /// </summary>
+        public Shape Shape2;
+
+        /// <summary>
+        /// Checks wether Entity1 and Entity2 is colliding
+        /// </summary>
+        /// <param name="point"></param> 
+        /// <param name="point1"></param>
+        /// <param name="point2"></param>
+        /// <param name="normal"></param>
+        /// <param name="penetration"></param>
+        /// <returns></returns>
+        public abstract bool IsColliding(ref TSMatrix orientation1, ref TSMatrix orientation2, ref TSVector position1, ref TSVector position2,
+            out TSVector point, out TSVector point1, out TSVector point2, out TSVector normal, out FP penetration);
+    }
+
     /// <summary>
     /// CollisionSystem. Used by the world class to detect all collisions. 
     /// Can be used seperatly from the physics.
@@ -271,47 +295,96 @@ namespace TrueSync.Physics3D {
             if (!b1IsMulti && !b2IsMulti)
             {
                 TSVector point1, point2;
-                if (SphereSphereCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
-                    ref body2.orientation, ref body1.position, ref body2.position,
-                    out point, out point1, out point2, out normal, out penetration))
+                ShapeType type = body1.shape.shapeType | body2.shape.shapeType;
+                switch (type)
                 {
-                    //normal = JVector.Up;
-                    //UnityEngine.Debug.Log("FINAL  --- >>> normal: " + normal);
-                    //FindSupportPoints(body1, body2, body1.Shape, body2.Shape, ref point, ref normal, out point1, out point2);
-                    RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
+                    case ShapeType.Sphere | ShapeType.Sphere:
+                        SphereSpherePair sphereSpherePair = SphereSpherePair.pool.GetNew();
+                        sphereSpherePair.Shape1 = body1.Shape;
+                        sphereSpherePair.Shape2 = body2.Shape;
+
+                        if (sphereSpherePair.IsColliding(ref body1.orientation, ref body2.orientation, ref body1.position, ref body2.position,
+                            out point, out point1, out point2, out normal, out penetration))
+                        {
+                            RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
+                        }
+                        SphereSpherePair.pool.GiveBack(sphereSpherePair);
+                        break;
+
+                    case ShapeType.Box | ShapeType.Box:
+                        //BoxBoxPair boxBoxPair = BoxBoxPair.pool.GetNew();
+                        //boxBoxPair.Shape1 = body1.Shape;
+                        //boxBoxPair.Shape2 = body2.Shape;
+
+                        //if (boxBoxPair.IsColliding(ref body1.orientation, ref body2.orientation, ref body1.position, ref body2.position,
+                        //    out point, out point1, out point2, out normal, out penetration))
+                        //{
+                        //    RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
+                        //}
+                        //BoxBoxPair.pool.GiveBack(boxBoxPair);
+                        //break;
+
+                    case ShapeType.Box | ShapeType.Sphere:
+                        //BoxSpherePair boxSpherePair = BoxSpherePair.pool.GetNew();
+
+                        //RigidBody b1, b2;
+                        //if (body1.Shape is BoxShape)
+                        //{
+                        //    b1 = body1;
+                        //    b2 = body2;
+                        //}
+                        //else
+                        //{
+                        //    b1 = body2;
+                        //    b2 = body1;
+                        //}
+                        //boxSpherePair.Shape1 = b1.Shape;
+                        //boxSpherePair.Shape2 = b2.Shape;
+
+                        //if (boxSpherePair.IsColliding(ref b1.orientation, ref b2.orientation, ref b1.position, ref b2.position,
+                        //    out point, out point1, out point2, out normal, out penetration))
+                        //{
+                        //    RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
+                        //}
+                        //BoxSpherePair.pool.GiveBack(boxSpherePair);
+                        //break;
+
+                    default:
+                        if (XenoCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
+                            ref body2.orientation, ref body1.position, ref body2.position,
+                            out point, out normal, out penetration))
+                        {
+                            //normal = JVector.Up;
+                            //UnityEngine.Debug.Log("FINAL  --- >>> normal: " + normal);
+                            FindSupportPoints(body1, body2, body1.Shape, body2.Shape, ref point, ref normal, out point1, out point2);
+                            RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
+                        }
+                        else if (speculative)
+                        {
+                            TSVector hit1, hit2;
+
+                            if (GJKCollide.ClosestPoints(body1.Shape, body2.Shape, ref body1.orientation, ref body2.orientation,
+                                ref body1.position, ref body2.position, out hit1, out hit2, out normal))
+                            {
+                                TSVector delta = hit2 - hit1;
+
+                                if (delta.sqrMagnitude < (body1.sweptDirection - body2.sweptDirection).sqrMagnitude)
+                                {
+                                    penetration = delta * normal;
+
+                                    if (penetration < FP.Zero)
+                                    {
+                                        RaiseCollisionDetected(body1, body2, ref hit1, ref hit2, ref normal, penetration);
+                                    }
+
+                                }
+                            }
+
+                        }
+                        break;
                 }
-                //if (XenoCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
-                //    ref body2.orientation, ref body1.position, ref body2.position,
-                //    out point, out normal, out penetration))
-                //{
-                //    //normal = JVector.Up;
-                //    //UnityEngine.Debug.Log("FINAL  --- >>> normal: " + normal);
-                //    TSVector point1, point2;
-                //    FindSupportPoints(body1, body2, body1.Shape, body2.Shape, ref point, ref normal, out point1, out point2);
-                //    RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
-                //}
-                //else if (speculative)
-                //{
-                //    TSVector hit1, hit2;
 
-                //    if (GJKCollide.ClosestPoints(body1.Shape, body2.Shape, ref body1.orientation, ref body2.orientation,
-                //        ref body1.position, ref body2.position, out hit1, out hit2, out normal))
-                //    {
-                //        TSVector delta = hit2 - hit1;
 
-                //        if (delta.sqrMagnitude < (body1.sweptDirection - body2.sweptDirection).sqrMagnitude)
-                //        {
-                //            penetration = delta * normal;
-
-                //            if (penetration < FP.Zero)
-                //            {
-                //                RaiseCollisionDetected(body1, body2, ref hit1, ref hit2, ref normal, penetration);
-                //            }
-
-                //        }
-                //    }
-
-                //}
 
                 //UnityEngine.Debug.Log("-----------------------: " + normal);
             }
@@ -407,62 +480,75 @@ namespace TrueSync.Physics3D {
                     return;
                 }
 
-                for (int i = 0; i < msLength; i++)
+                ShapeType type = body1.shape.shapeType | body2.shape.shapeType;
+                switch (type)
                 {
-                    ms.SetCurrentShape(i);
+                    case ShapeType.Sphere | ShapeType.TriangleMesh:
+                        for (int i = 0; i < msLength; i++)
+                        {
+                            ms.SetCurrentShape(i);
+                            TSVector point1, point2;
+                            SphereTrianglePair pair = SphereTrianglePair.pool.GetNew();
+                            pair.Shape1 = ms;
+                            pair.Shape2 = b2.shape;
+                            if (pair.IsColliding(ref b1.orientation, ref b2.orientation, ref b1.position, ref b2.position,
+                                out point, out point1, out point2, out normal, out penetration))
+                            {
+                                RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
+                            }
+                            SphereTrianglePair.pool.GiveBack(pair);
+                        }
+                        break;
+                    case ShapeType.Box | ShapeType.TriangleMesh:
+                    default:
+                        for (int i = 0; i < msLength; i++)
+                        {
+                            ms.SetCurrentShape(i);
 
-                    TSVector point1, point2;
-                    if (SphereTriangleCollide.Detect(ms, b2.Shape, ref b1.orientation,
-                        ref b2.orientation, ref b1.position, ref b2.position,
-                        out point, out point1, out point2, out normal, out penetration))
-                    {
-                        //FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
+                            if (XenoCollide.Detect(ms, b2.Shape, ref b1.orientation,
+                                ref b2.orientation, ref b1.position, ref b2.position,
+                                out point, out normal, out penetration))
+                            {
+                                TSVector point1, point2;
+                                FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
 
-                        RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
-                    }
+                                if (useTerrainNormal && ms is TerrainShape)
+                                {
+                                    (ms as TerrainShape).CollisionNormal(out normal);
+                                    TSVector.Transform(ref normal, ref b1.orientation, out normal);
+                                }
+                                else if (useTriangleMeshNormal && ms is TriangleMeshShape)
+                                {
+                                    (ms as TriangleMeshShape).CollisionNormal(out normal);
+                                    TSVector.Transform(ref normal, ref b1.orientation, out normal);
+                                }
 
-                    //if (XenoCollide.Detect(ms, b2.Shape, ref b1.orientation,
-                    //    ref b2.orientation, ref b1.position, ref b2.position,
-                    //    out point, out normal, out penetration))
-                    //{
-                    //    TSVector point1, point2;
-                    //    FindSupportPoints(b1, b2, ms, b2.Shape, ref point, ref normal, out point1, out point2);
+                                RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
+                            }
+                            else if (speculative)
+                            {
+                                TSVector hit1, hit2;
 
-                    //    if (useTerrainNormal && ms is TerrainShape)
-                    //    {
-                    //        (ms as TerrainShape).CollisionNormal(out normal);
-                    //        TSVector.Transform(ref normal, ref b1.orientation, out normal);
-                    //    }
-                    //    else if (useTriangleMeshNormal && ms is TriangleMeshShape)
-                    //    {
-                    //        (ms as TriangleMeshShape).CollisionNormal(out normal);
-                    //        TSVector.Transform(ref normal, ref b1.orientation, out normal);
-                    //    }
+                                if (GJKCollide.ClosestPoints(ms, b2.Shape, ref b1.orientation, ref b2.orientation,
+                                    ref b1.position, ref b2.position, out hit1, out hit2, out normal))
+                                {
+                                    TSVector delta = hit2 - hit1;
 
-                    //    RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
-                    //}
-                    //else if (speculative)
-                    //{
-                    //    TSVector hit1, hit2;
+                                    if (delta.sqrMagnitude < (body1.sweptDirection - body2.sweptDirection).sqrMagnitude)
+                                    {
+                                        penetration = delta * normal;
 
-                    //    if (GJKCollide.ClosestPoints(ms, b2.Shape, ref b1.orientation, ref b2.orientation,
-                    //        ref b1.position, ref b2.position, out hit1, out hit2, out normal))
-                    //    {
-                    //        TSVector delta = hit2 - hit1;
+                                        if (penetration < FP.Zero)
+                                        {
+                                            RaiseCollisionDetected(b1, b2, ref hit1, ref hit2, ref normal, penetration);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
 
-                    //        if (delta.sqrMagnitude < (body1.sweptDirection - body2.sweptDirection).sqrMagnitude)
-                    //        {
-                    //            penetration = delta * normal;
-
-                    //            if (penetration < FP.Zero)
-                    //            {
-                    //                RaiseCollisionDetected(b1, b2, ref hit1, ref hit2, ref normal, penetration);
-                    //            }
-                    //        }
-                    //    }
-                    //}
                 }
-
                 ms.ReturnWorkingClone();
             }
         }

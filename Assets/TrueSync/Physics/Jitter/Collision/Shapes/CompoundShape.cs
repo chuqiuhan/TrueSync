@@ -125,6 +125,7 @@ namespace TrueSync.Physics3D {
                 throw new ArgumentException("Multishapes are not supported!");
 
             this.UpdateShape();
+            this.shapeType = ShapeType.Compound;
         }
 
         public CompoundShape(TransformedShape[] shapes)
@@ -136,6 +137,7 @@ namespace TrueSync.Physics3D {
                 throw new ArgumentException("Multishapes are not supported!");
 
             this.UpdateShape();
+            this.shapeType = ShapeType.Compound;
         }
 
         private bool TestValidity()

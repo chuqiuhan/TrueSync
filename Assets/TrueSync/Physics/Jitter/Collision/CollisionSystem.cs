@@ -311,44 +311,42 @@ namespace TrueSync.Physics3D {
                         SphereSpherePair.pool.GiveBack(sphereSpherePair);
                         break;
 
-                    case ShapeType.Box | ShapeType.Box:
-                        //BoxBoxPair boxBoxPair = BoxBoxPair.pool.GetNew();
-                        //boxBoxPair.Shape1 = body1.Shape;
-                        //boxBoxPair.Shape2 = body2.Shape;
-
-                        //if (boxBoxPair.IsColliding(ref body1.orientation, ref body2.orientation, ref body1.position, ref body2.position,
-                        //    out point, out point1, out point2, out normal, out penetration))
-                        //{
-                        //    RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
-                        //}
-                        //BoxBoxPair.pool.GiveBack(boxBoxPair);
-                        //break;
-
                     case ShapeType.Box | ShapeType.Sphere:
-                        //BoxSpherePair boxSpherePair = BoxSpherePair.pool.GetNew();
+                        BoxSpherePair boxSpherePair = BoxSpherePair.pool.GetNew();
 
-                        //RigidBody b1, b2;
-                        //if (body1.Shape is BoxShape)
-                        //{
-                        //    b1 = body1;
-                        //    b2 = body2;
-                        //}
-                        //else
-                        //{
-                        //    b1 = body2;
-                        //    b2 = body1;
-                        //}
-                        //boxSpherePair.Shape1 = b1.Shape;
-                        //boxSpherePair.Shape2 = b2.Shape;
+                        RigidBody b1, b2;
+                        if (body1.Shape is BoxShape)
+                        {
+                            b1 = body1;
+                            b2 = body2;
+                        }
+                        else
+                        {
+                            b1 = body2;
+                            b2 = body1;
+                        }
+                        boxSpherePair.Shape1 = b1.Shape;
+                        boxSpherePair.Shape2 = b2.Shape;
 
-                        //if (boxSpherePair.IsColliding(ref b1.orientation, ref b2.orientation, ref b1.position, ref b2.position,
-                        //    out point, out point1, out point2, out normal, out penetration))
-                        //{
-                        //    RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
-                        //}
-                        //BoxSpherePair.pool.GiveBack(boxSpherePair);
-                        //break;
+                        if (boxSpherePair.IsColliding(ref b1.orientation, ref b2.orientation, ref b1.position, ref b2.position,
+                            out point, out point1, out point2, out normal, out penetration))
+                        {
+                            RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
+                        }
+                        BoxSpherePair.pool.GiveBack(boxSpherePair);
+                        break;
+                    case ShapeType.Box | ShapeType.Box:
+                    //BoxBoxPair boxBoxPair = BoxBoxPair.pool.GetNew();
+                    //boxBoxPair.Shape1 = body1.Shape;
+                    //boxBoxPair.Shape2 = body2.Shape;
 
+                    //if (boxBoxPair.IsColliding(ref body1.orientation, ref body2.orientation, ref body1.position, ref body2.position,
+                    //    out point, out point1, out point2, out normal, out penetration))
+                    //{
+                    //    RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
+                    //}
+                    //BoxBoxPair.pool.GiveBack(boxBoxPair);
+                    //break;
                     default:
                         if (XenoCollide.Detect(body1.Shape, body2.Shape, ref body1.orientation,
                             ref body2.orientation, ref body1.position, ref body2.position,

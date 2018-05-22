@@ -308,17 +308,11 @@ namespace TrueSync.Physics3D {
                     island.bodies.Add(body);
                     body.island = island;
 
-                    foreach (Arbiter a in body.arbiters)
-                    {
-                        body1.island.arbiter.Remove(a);
-                        island.arbiter.Add(a);
-                    }
+                    body1.island.arbiter.RemoveAll(body.arbiters);
+                    island.arbiter.AddAll(body.arbiters);
 
-                    foreach (Constraint c in body.constraints)
-                    {
-                        body1.island.constraints.Remove(c);
-                        island.constraints.Add(c);
-                    }
+                    body1.island.constraints.RemoveAll(body.constraints);
+                    island.constraints.AddAll(body.constraints);
                 }
 
                 rightSearchQueue.Clear();
@@ -332,17 +326,11 @@ namespace TrueSync.Physics3D {
                     island.bodies.Add(body);
                     body.island = island;
 
-                    foreach (Arbiter a in body.arbiters)
-                    {
-                        body0.island.arbiter.Remove(a);
-                        island.arbiter.Add(a);
-                    }
+                    body0.island.arbiter.RemoveAll(body.arbiters);
+                    island.arbiter.AddAll(body.arbiters);
 
-                    foreach (Constraint c in body.constraints)
-                    {
-                        body0.island.constraints.Remove(c);
-                        island.constraints.Add(c);
-                    }
+                    body0.island.constraints.RemoveAll(body.constraints);
+                    island.constraints.AddAll(body.constraints);
                 }
 
                 leftSearchQueue.Clear();
@@ -406,15 +394,8 @@ namespace TrueSync.Physics3D {
                         largeIslandOwner.island.bodies.Add(b);
                     }
 
-                    foreach (Arbiter a in giveBackIsland.arbiter)
-                    {
-                        largeIslandOwner.island.arbiter.Add(a);
-                    }
-
-                    foreach (Constraint c in giveBackIsland.constraints)
-                    {
-                        largeIslandOwner.island.constraints.Add(c);
-                    }
+                    largeIslandOwner.island.arbiter.AddAll(giveBackIsland.arbiter);
+                    largeIslandOwner.island.constraints.AddAll(giveBackIsland.constraints);
 
                     giveBackIsland.ClearLists();
                 }

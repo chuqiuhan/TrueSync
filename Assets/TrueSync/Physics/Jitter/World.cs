@@ -587,7 +587,10 @@ namespace TrueSync.Physics3D
                 events.RaiseTriggerStayCollide(op.contact);
             }
 
-            while (removedArbiterQueue.Count > 0) islands.ArbiterRemoved(removedArbiterQueue.Dequeue());
+            while (removedArbiterQueue.Count > 0)
+            {
+                islands.ArbiterRemoved(removedArbiterQueue.Dequeue());
+            }
 
             for (int index = 0, length = softbodies.Count; index < length; index++) {
                 SoftBody body = softbodies[index];
@@ -597,7 +600,10 @@ namespace TrueSync.Physics3D
 
             CollisionSystem.Detect();
 
-            while (addedArbiterQueue.Count > 0) islands.ArbiterCreated(addedArbiterQueue.Dequeue());
+            while (addedArbiterQueue.Count > 0)
+            {
+                islands.ArbiterCreated(addedArbiterQueue.Dequeue());
+            }
             
             CheckDeactivation();
 
@@ -920,7 +926,9 @@ namespace TrueSync.Physics3D
                 if (arbiter == null) {
                     arbiter = Arbiter.Pool.GetNew();
                     arbiter.body1 = body1; arbiter.body2 = body2;
-                    selectedArbiterMap.Add(new ArbiterKey(body1, body2), arbiter);
+                    selectedArbiterMap.lookUpKey.body1 = body1;
+                    selectedArbiterMap.lookUpKey.body2 = body2;
+                    selectedArbiterMap.Add(selectedArbiterMap.lookUpKey.GetHashCode(), arbiter);
 
                     arbiterCreated = true;
                 }
@@ -963,7 +971,8 @@ namespace TrueSync.Physics3D
                 }
             }
 
-            if (!anyBodyColliderOnly && contact != null) events.RaiseContactCreated(contact);
+            if (!anyBodyColliderOnly && contact != null)
+                events.RaiseContactCreated(contact);
 
         }
 

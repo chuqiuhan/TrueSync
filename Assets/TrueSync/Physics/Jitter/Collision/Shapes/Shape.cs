@@ -25,6 +25,24 @@ using System.Collections.Generic;
 namespace TrueSync.Physics3D {
 
     /// <summary>
+    /// </summary>
+    [Flags]
+    public enum ShapeType
+    {
+        Base = 0,
+        Box = 1,
+        Capusle = 1 << 1,
+        Compound = 1 << 2,
+        Cone = 1 << 3,
+        ConvexHull = 1 << 4,
+        Cylinder = 1 << 5,
+        MinkowskiSum = 1 << 6,
+        Sphere = 1 << 7,
+        Terrain = 1 << 8,
+        TriangleMesh = 1 << 9
+    }
+
+    /// <summary>
     /// Gets called when a shape changes one of the parameters.
     /// For example the size of a box is changed.
     /// </summary>
@@ -46,6 +64,8 @@ namespace TrueSync.Physics3D {
 
         internal TSBBox boundingBox = TSBBox.LargeBox;
         internal TSVector geomCen = TSVector.zero;
+
+        internal ShapeType shapeType = ShapeType.Base;
 
         /// <summary>
         /// Gets called when the shape changes one of the parameters.
@@ -69,6 +89,11 @@ namespace TrueSync.Physics3D {
         /// Gets the mass of the shape. This is the volume. (density = 1)
         /// </summary>
         public FP Mass { get { return mass; } protected set { mass = value; } }
+
+        /// <summary>
+        /// Gets the type of the shape.
+        /// </summary>
+        public ShapeType Type { get { return shapeType; }  protected set { shapeType = value; } }
 
         /// <summary>
         /// Informs all listener that the shape changed.

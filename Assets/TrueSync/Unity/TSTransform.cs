@@ -568,6 +568,7 @@ namespace TrueSync {
                 _localScale = trans.localScale.ToTSVector();
 
                 _serialized = true;
+                trans.hasChanged = false;
             }
         }
 

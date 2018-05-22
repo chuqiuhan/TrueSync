@@ -194,7 +194,9 @@ namespace TrueSync.Physics3D {
                 arbiter.body1.arbiters.Add (arbiter);
 				arbiter.body2.arbiters.Add (arbiter);
 
-				world.ArbiterMap.Add (new ArbiterKey(arbiter.body1, arbiter.body2), arbiter);
+                world.ArbiterMap.lookUpKey.body1 = arbiter.body1;
+                world.ArbiterMap.lookUpKey.body2 = arbiter.body2;
+                world.ArbiterMap.Add (world.ArbiterMap.lookUpKey.GetHashCode(), arbiter);
             }
 
             for (index = 0, length = clonedArbitersTrigger.Count; index < length; index++) {
@@ -206,7 +208,9 @@ namespace TrueSync.Physics3D {
                 arbiter.body1.arbitersTrigger.Add(arbiter);
                 arbiter.body2.arbitersTrigger.Add(arbiter);
 
-                world.ArbiterTriggerMap.Add(new ArbiterKey(arbiter.body1, arbiter.body2), arbiter);
+                world.ArbiterTriggerMap.lookUpKey.body1 = arbiter.body1;
+                world.ArbiterTriggerMap.lookUpKey.body2 = arbiter.body2;
+                world.ArbiterTriggerMap.Add(world.ArbiterTriggerMap.lookUpKey.GetHashCode(), arbiter);
             }
 
             world.islands.islands.Clear();

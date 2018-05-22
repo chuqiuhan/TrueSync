@@ -51,6 +51,7 @@ namespace TrueSync.Physics3D {
             this.length = length;
             this.radius = radius;
             UpdateShape();
+            this.shapeType = ShapeType.Capusle;
         }
 
         /// <summary>

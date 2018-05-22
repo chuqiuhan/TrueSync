@@ -89,6 +89,7 @@ namespace TrueSync.Physics3D {
             this.scaleZ = scaleZ;
 
             UpdateShape();
+            this.shapeType = ShapeType.Terrain;
         }
 
         internal TerrainShape() { }

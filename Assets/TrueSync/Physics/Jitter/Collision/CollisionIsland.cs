@@ -100,7 +100,9 @@ namespace TrueSync.Physics3D {
 
         internal void ClearLists()
         {
-            arbiter.Clear(); bodies.Clear(); constraints.Clear();
+            arbiter.Clear();
+            bodies.Clear();
+            constraints.Clear();
         }
 
     }

@@ -44,6 +44,7 @@ namespace TrueSync.Physics3D {
         {
             this.radius = radius;
             this.UpdateShape();
+            this.shapeType = ShapeType.Sphere;
         }
 
         /// <summary>

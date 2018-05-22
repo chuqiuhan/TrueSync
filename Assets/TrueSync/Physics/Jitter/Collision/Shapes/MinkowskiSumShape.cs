@@ -31,6 +31,7 @@ namespace TrueSync.Physics3D {
         public MinkowskiSumShape(IEnumerable<Shape> shapes)
         {
             AddShapes(shapes);
+            this.shapeType = ShapeType.MinkowskiSum;
         }
 
         public void AddShapes(IEnumerable<Shape> shapes)

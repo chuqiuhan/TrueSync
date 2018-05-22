@@ -120,7 +120,8 @@ namespace TrueSync.Physics3D {
     /// </summary>
 	public class ArbiterMap : IEnumerable
     {
-        private Dictionary<ArbiterKey, Arbiter> dictionaryKeys = new Dictionary<ArbiterKey, Arbiter>(new ArbiterKeyComparer());
+        //private Dictionary<ArbiterKey, Arbiter> dictionaryKeys = new Dictionary<ArbiterKey, Arbiter>(new ArbiterKeyComparer());
+        private Dictionary<int, Arbiter> dictionaryKeys = new Dictionary<int, Arbiter>();
 
         public ArbiterKey lookUpKey;
 
@@ -142,15 +143,15 @@ namespace TrueSync.Physics3D {
         public bool LookUpArbiter(RigidBody body1, RigidBody body2, out Arbiter arbiter)
         {
             lookUpKey.SetBodies(body1, body2);
-            return dictionaryKeys.TryGetValue(lookUpKey, out arbiter);
+            return dictionaryKeys.TryGetValue(lookUpKey.GetHashCode(), out arbiter);
         }
 
-		public Dictionary<ArbiterKey, Arbiter>.ValueCollection Arbiters
+		public Dictionary<int, Arbiter>.ValueCollection Arbiters
         {
 			get { return dictionaryKeys.Values; }
         }
 
-        internal void Add(ArbiterKey key, Arbiter arbiter)
+        internal void Add(int key, Arbiter arbiter)
         {
             dictionaryKeys.Add(key, arbiter);
         }
@@ -163,7 +164,7 @@ namespace TrueSync.Physics3D {
         internal void Remove(Arbiter arbiter)
         {
             lookUpKey.SetBodies(arbiter.body1, arbiter.body2);
-            dictionaryKeys.Remove(lookUpKey);
+            dictionaryKeys.Remove(lookUpKey.GetHashCode());
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace TrueSync.Physics3D {
         public bool ContainsArbiter(RigidBody body1, RigidBody body2)
         {
             lookUpKey.SetBodies(body1, body2);
-            return dictionaryKeys.ContainsKey(lookUpKey);
+            return dictionaryKeys.ContainsKey(lookUpKey.GetHashCode());
         }
 
         public IEnumerator GetEnumerator()

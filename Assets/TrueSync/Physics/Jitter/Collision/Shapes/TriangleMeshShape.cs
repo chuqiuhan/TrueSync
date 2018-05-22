@@ -53,9 +53,10 @@ namespace TrueSync.Physics3D {
         {
             this.octree = octree;
             UpdateShape();
+            this.shapeType = ShapeType.TriangleMesh;
         }
 
-        internal TriangleMeshShape() { }
+        internal TriangleMeshShape() { this.shapeType = ShapeType.TriangleMesh; }
 
  
         protected override Multishape CreateWorkingClone()
@@ -131,6 +132,7 @@ namespace TrueSync.Physics3D {
         }
 
         TSVector[] vecs = new TSVector[3];
+        public TSVector[] Vertices { get { return vecs; } }
 
         /// <summary>
         /// SupportMapping. Finds the point in the shape furthest away from the given direction.

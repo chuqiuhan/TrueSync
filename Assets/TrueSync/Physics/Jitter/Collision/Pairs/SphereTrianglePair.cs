@@ -30,114 +30,173 @@ namespace TrueSync.Physics3D
             TSVector.Transform(ref center2, ref orientation2, out center2);
             TSVector.Add(ref position2, ref center2, out center2);
 
-
             TSVector[] vertices = triangle.Vertices;
-            TSVector vertex0;
-            TSVector.Transform(ref vertices[0], ref orientation1, out vertex0);
-            TSVector.Add(ref position1, ref vertex0, out vertex0);
-            TSVector vertex1;
-            TSVector.Transform(ref vertices[1], ref orientation1, out vertex1);
-            TSVector.Add(ref position1, ref vertex1, out vertex1);
-            TSVector vertex2;
-            TSVector.Transform(ref vertices[2], ref orientation1, out vertex2);
-            TSVector.Add(ref position1, ref vertex2, out vertex2);
+            TSVector.Transform(ref vertices[0], ref orientation1, out vertices[0]);
+            TSVector.Add(ref position1, ref vertices[0], out vertices[0]);
+            TSVector.Transform(ref vertices[1], ref orientation1, out vertices[1]);
+            TSVector.Add(ref position1, ref vertices[1], out vertices[1]);
+            TSVector.Transform(ref vertices[2], ref orientation1, out vertices[2]);
+            TSVector.Add(ref position1, ref vertices[2], out vertices[2]);
 
+            return Collide(center2, sphere.radius, ref vertices, ref point, ref point1, ref point2, ref normal, ref penetration);
+        }
 
-            ClosestPointPointTriangle(ref center2, ref vertex0, ref vertex1, ref vertex2, out point);
-            TSVector v = point - center2;
+        /// <summary>
+        /// See also geometrictools.com
+        /// Basic idea: D = |p - (lo + t0*lv)| where t0 = lv . (p - lo) / lv . lv
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="p"></param>
+        /// <param name="nearest"></param>
+        /// <returns></returns>
+        private FP SegmentSquareDistance(TSVector from, TSVector to, TSVector point, ref TSVector nearest)
+        {
+            TSVector diff = point - from;
+            TSVector v = to - from;
+            FP t = TSVector.Dot(v, diff);
 
-            FP dot = TSVector.Dot(ref v, ref v);
-
-            if (dot <= sphere.Radius * sphere.Radius)
+            if (t > FP.Zero)
             {
-                normal = TSVector.Cross(TSVector.Subtract(vertex0, vertex1), TSVector.Subtract(vertex0, vertex2)).normalized;
-                point1 = point;
-                point2 = center2 + TSVector.Negate(normal) * sphere.radius;
-                penetration = sphere.Radius - TSMath.Sqrt(dot);
+                FP dotVV = TSVector.Dot(v, v);
+                if (t < dotVV)
+                {
+                    t /= dotVV;
+                    diff -= t * v;
+                }
+                else
+                {
+                    t = 1;
+                    diff -= v;
+                }
+            }
+            else
+                t = 0;
+
+            nearest = from + t * v;
+            return TSVector.Dot(diff, diff);
+        }
+
+        private bool Collide(TSVector sphereCenter, FP r, ref TSVector[] vertices,
+            ref TSVector point, ref TSVector point1, ref TSVector point2, ref TSVector resultNormal, ref FP penetration)
+        {
+            TSVector c = sphereCenter;
+            TSVector delta = TSVector.one;
+
+            TSVector normal = TSVector.Cross(vertices[1] - vertices[0], vertices[2] - vertices[0]);
+            normal = TSVector.Normalize(normal);
+            TSVector p1ToCentre = c - vertices[0];
+            FP distanceFromPlane = TSVector.Dot(p1ToCentre, normal);
+
+            if (distanceFromPlane < FP.Zero)
+            {
+                //triangle facing the other way
+                distanceFromPlane *= -1;
+                normal *= -1;
+            }
+
+            FP contactMargin = FP.Zero; //TODO: PersistentManifold.ContactBreakingThreshold;
+            bool isInsideContactPlane = distanceFromPlane < r + contactMargin;
+            bool isInsideShellPlane = distanceFromPlane < r;
+
+            FP deltaDotNormal = TSVector.Dot(delta, normal);
+            if (!isInsideShellPlane && deltaDotNormal >= FP.Zero)
+                return false;
+
+            // Check for contact / intersection
+            bool hasContact = false;
+            TSVector contactPoint = TSVector.zero;
+            if (isInsideContactPlane)
+            {
+                if (FaceContains(ref c, ref vertices, ref normal))
+                {
+                    // Inside the contact wedge - touches a point on the shell plane
+                    hasContact = true;
+                    contactPoint = c - normal * distanceFromPlane;
+                }
+                else
+                {
+                    // Could be inside one of the contact capsules
+                    FP contactCapsuleRadiusSqr = (r + contactMargin) * (r + contactMargin);
+                    TSVector nearestOnEdge = TSVector.zero;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        TSVector pa, pb;
+                        pa = vertices[i];
+                        pb = vertices[(i + 1) % 3];
+
+                        FP distanceSqr = SegmentSquareDistance(pa, pb, c, ref nearestOnEdge);
+                        if (distanceSqr < contactCapsuleRadiusSqr)
+                        {
+                            // Yep, we're inside a capsule
+                            hasContact = true;
+                            contactPoint = nearestOnEdge;
+                        }
+                    }
+                }
+            }
+
+            if (hasContact)
+            {
+                FP MaxOverlap = FP.Zero; // TODO:
+                TSVector contactToCentre = c - contactPoint;
+                FP distanceSqr = contactToCentre.sqrMagnitude;
+                if (distanceSqr < (r - MaxOverlap) * (r - MaxOverlap))
+                {
+                    FP distance = TSMath.Sqrt(distanceSqr);
+                    resultNormal = contactToCentre;
+                    resultNormal = TSVector.Normalize(resultNormal);
+                    point = contactPoint;
+                    point1 = point;
+                    point2 = sphereCenter + resultNormal * r;
+                    penetration = r - distance;
+                    resultNormal = TSVector.Negate(resultNormal);
+                    return true;
+                }
+
+                if (TSVector.Dot(delta, contactToCentre) >= FP.Zero)
+                    return false;
+
+                // Moving towards the contact point -> collision
+                point = point1 = point2 = contactPoint;
                 return true;
             }
             return false;
         }
 
-
-        /// <summary>
-        /// Determines the closest point between a point and a triangle.
-        /// </summary>
-        /// <param name="point">The point to test.</param>
-        /// <param name="vertex1">The first vertex to test.</param>
-        /// <param name="vertex2">The second vertex to test.</param>
-        /// <param name="vertex3">The third vertex to test.</param>
-        /// <param name="result">When the method completes, contains the closest point between the two objects.</param>
-        public static void ClosestPointPointTriangle(ref TSVector point, ref TSVector vertex1, ref TSVector vertex2, ref TSVector vertex3, out TSVector result)
+        private bool PointInTriangle(ref TSVector[] vertices, ref TSVector normal, ref TSVector p)
         {
-            //Source: Real-Time Collision Detection by Christer Ericson
-            //Reference: Page 136
+            TSVector p1 = vertices[0];
+            TSVector p2 = vertices[1];
+            TSVector p3 = vertices[2];
 
-            //Check if P in vertex region outside A
-            TSVector ab = vertex2 - vertex1;
-            TSVector ac = vertex3 - vertex1;
-            TSVector ap = point - vertex1;
+            TSVector edge1 = p2 - p1;
+            TSVector edge2 = p3 - p2;
+            TSVector edge3 = p1 - p3;
 
-            FP d1 = TSVector.Dot(ab, ap);
-            FP d2 = TSVector.Dot(ac, ap);
-            if (d1 <= FP.Zero && d2 <= FP.Zero)
-            {
-                result = vertex1; //Barycentric coordinates (1,0,0)
-                return;
-            }
+            TSVector p1ToP = p - p1;
+            TSVector p2ToP = p - p2;
+            TSVector p3ToP = p - p3;
 
-            //Check if P in vertex region outside B
-            TSVector bp = point - vertex2;
-            FP d3 = TSVector.Dot(ab, bp);
-            FP d4 = TSVector.Dot(ac, bp);
-            if (d3 >= FP.Zero && d4 <= d3)
-            {
-                result = vertex2; // Barycentric coordinates (0,1,0)
-                return;
-            }
+            TSVector edge1Normal = TSVector.Cross(edge1, normal);
+            TSVector edge2Normal = TSVector.Cross(edge2, normal);
+            TSVector edge3Normal = TSVector.Cross(edge3, normal);
 
-            //Check if P in edge region of AB, if so return projection of P onto AB
-            FP vc = d1 * d4 - d3 * d2;
-            if (vc <= FP.Zero && d1 >= FP.Zero && d3 <= FP.Zero)
-            {
-                FP v = d1 / (d1 - d3);
-                result = vertex1 + v * ab; //Barycentric coordinates (1-v,v,0)
-                return;
-            }
+            FP r1, r2, r3;
+            r1 = TSVector.Dot(edge1Normal, p1ToP);
+            r2 = TSVector.Dot(edge2Normal, p2ToP);
+            r3 = TSVector.Dot(edge3Normal, p3ToP);
+            if ((r1 > FP.Zero && r2 > FP.Zero && r3 > FP.Zero) ||
+                 (r1 <= FP.Zero && r2 <= FP.Zero && r3 <= FP.Zero))
+                return true;
+            return false;
+        }
 
-            //Check if P in vertex region outside C
-            TSVector cp = point - vertex3;
-            FP d5 = TSVector.Dot(ab, cp);
-            FP d6 = TSVector.Dot(ac, cp);
-            if (d6 >= FP.Zero && d5 <= d6)
-            {
-                result = vertex3; //Barycentric coordinates (0,0,1)
-                return;
-            }
-
-            //Check if P in edge region of AC, if so return projection of P onto AC
-            FP vb = d5 * d2 - d1 * d6;
-            if (vb <= FP.Zero && d2 >= FP.Zero && d6 <= FP.Zero)
-            {
-                FP w = d2 / (d2 - d6);
-                result = vertex1 + w * ac; //Barycentric coordinates (1-w,0,w)
-                return;
-            }
-
-            //Check if P in edge region of BC, if so return projection of P onto BC
-            FP va = d3 * d6 - d5 * d4;
-            if (va <= FP.Zero && (d4 - d3) >= FP.Zero && (d5 - d6) >= FP.Zero)
-            {
-                FP w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
-                result = vertex2 + w * (vertex3 - vertex2); //Barycentric coordinates (0,1-w,w)
-                return;
-            }
-
-            //P inside face region. Compute Q through its Barycentric coordinates (u,v,w)
-            FP denom = FP.One / (va + vb + vc);
-            FP v2 = vb * denom;
-            FP w2 = vc * denom;
-            result = vertex1 + ab * v2 + ac * w2; //= u*vertex1 + v*vertex2 + w*vertex3, u = va * denom = 1.0f - v - w
+        private bool FaceContains(ref TSVector p, ref TSVector[] vertices, ref TSVector normal)
+        {
+            TSVector lp = p;
+            TSVector lnormal = normal;
+            return PointInTriangle(ref vertices, ref lnormal, ref lp);
         }
     }
 }

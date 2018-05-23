@@ -56,7 +56,8 @@ namespace TrueSync.Physics3D {
             AddConnection(constraint.body1, constraint.body2);
 
             constraint.body1.constraints.Add(constraint);
-            if (constraint.body2 != null) constraint.body2.constraints.Add(constraint);
+            if (constraint.body2 != null)
+                constraint.body2.constraints.Add(constraint);
 
             if (constraint.body1.island != null)
                 constraint.body1.island.constraints.Add(constraint);
@@ -105,11 +106,24 @@ namespace TrueSync.Physics3D {
         public void RemoveBody(RigidBody body)
         {
             // Remove everything.
-            foreach (Arbiter arbiter in body.arbiters) rmStackArb.Push(arbiter);
-            while (rmStackArb.Count > 0) ArbiterRemoved(rmStackArb.Pop());
+            foreach (Arbiter arbiter in body.arbiters)
+            {
+                rmStackArb.Push(arbiter);
+            }
+            while (rmStackArb.Count > 0)
+            {
+                ArbiterRemoved(rmStackArb.Pop());
+            }
 
-            foreach (Constraint constraint in body.constraints) rmStackCstr.Push(constraint);
-            while (rmStackCstr.Count > 0) ConstraintRemoved(rmStackCstr.Pop());
+            foreach (Constraint constraint in body.constraints)
+            {
+                rmStackCstr.Push(constraint);
+            }
+            while (rmStackCstr.Count > 0)
+            {
+                ConstraintRemoved(rmStackCstr.Pop());
+            }
+
 
             body.arbiters.Clear();
             body.constraints.Clear();
@@ -183,7 +197,7 @@ namespace TrueSync.Physics3D {
                     islands.Add(newIsland);
                 }
             }
-            else if (body1 != null && body2 != null) // both are !static
+            else // both are !static
             {
                 MergeIslands(body1, body2);
 

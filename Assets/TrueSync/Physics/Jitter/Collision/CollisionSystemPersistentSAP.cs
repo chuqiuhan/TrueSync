@@ -67,12 +67,20 @@ namespace TrueSync.Physics3D {
 		// internal values for faster access within the engine
 		public IBroadphaseEntity Entity1, Entity2;
 
-		/// <summary>
-		/// Initializes a new instance of the BodyPair class.
-		/// </summary>
-		/// <param name="entity1"></param>
-		/// <param name="entity2"></param>
-		public OverlapPair(IBroadphaseEntity entity1, IBroadphaseEntity entity2)
+        public static ResourcePool<OverlapPair> Pool = new ResourcePool<OverlapPair>();
+
+        public OverlapPair()
+        {
+            this.Entity1 = null;
+            this.Entity2 = null;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the BodyPair class.
+        /// </summary>
+        /// <param name="entity1"></param>
+        /// <param name="entity2"></param>
+        public OverlapPair(IBroadphaseEntity entity1, IBroadphaseEntity entity2)
 		{
 			this.Entity1 = entity1;
 			this.Entity2 = entity2;
@@ -128,8 +136,6 @@ namespace TrueSync.Physics3D {
 
 			return 0;
 		}
-
-
 	}
     #endregion
 
@@ -224,25 +230,26 @@ namespace TrueSync.Physics3D {
         }
 
         #region Incoherent Update - Quicksort
-
         private int QuickSort(SweepPoint sweepPoint1, SweepPoint sweepPoint2)
         {
             FP val1 = sweepPoint1.Value;
             FP val2 = sweepPoint2.Value;
 
-            if (val1 > val2) return 1;
-            else if (val2 > val1) return -1;
-            else return 0;
+            if (val1 > val2)
+                return 1;
+            else if (val2 > val1)
+                return -1;
+            else
+                return 0;
         }
 
 		public List<IBroadphaseEntity> activeList = new List<IBroadphaseEntity>();
-
         private void DirtySortAxis(List<SweepPoint> axis)
         {
             axis.Sort(QuickSort);
             activeList.Clear();
 
-            for (int i = 0; i < axis.Count; i++)
+            for (int i = 0, length = axis.Count; i < length; i++)
             {
                 SweepPoint keyelement = axis[i];
 
@@ -250,8 +257,15 @@ namespace TrueSync.Physics3D {
                 {
                     foreach (IBroadphaseEntity body in activeList)
                     {
-                        if (CheckBoundingBoxes(body,keyelement.Body)) 
-                            fullOverlaps.Add(new OverlapPair(body, keyelement.Body));
+                        if (CheckBoundingBoxes(body,keyelement.Body))
+                        {
+                            //fullOverlaps.Add(new OverlapPair(body, keyelement.Body));
+                            OverlapPair pair = OverlapPair.Pool.GetNew();
+                            pair.Entity1 = body;
+                            pair.Entity2 = keyelement.Body;
+                            fullOverlaps.Add(pair);
+                        }
+
                     }
 
                     activeList.Add(keyelement.Body);
@@ -265,7 +279,6 @@ namespace TrueSync.Physics3D {
         #endregion
 
         #region Coherent Update - Insertionsort
-
         private void SortAxis(List<SweepPoint> axis)
         {
             for (int j = 1; j < axis.Count; j++)
@@ -283,13 +296,27 @@ namespace TrueSync.Physics3D {
                     {
                         if (CheckBoundingBoxes(swapper.Body, keyelement.Body))
                         {
-                            lock (fullOverlaps) fullOverlaps.Add(new OverlapPair(swapper.Body, keyelement.Body));
+                            lock (fullOverlaps)
+                            {
+                                //fullOverlaps.Add(new OverlapPair(swapper.Body, keyelement.Body));
+                                OverlapPair pair = OverlapPair.Pool.GetNew();
+                                pair.Entity1 = swapper.Body;
+                                pair.Entity2 = keyelement.Body;
+                                fullOverlaps.Add(pair);
+                            }
                         }
                     }
 
                     if (!keyelement.Begin && swapper.Begin)
                     {
-                        lock (fullOverlaps) fullOverlaps.Remove(new OverlapPair(swapper.Body, keyelement.Body));
+                        lock (fullOverlaps)
+                        {
+                            //fullOverlaps.Remove(new OverlapPair(swapper.Body, keyelement.Body));
+                            OverlapPair pair = OverlapPair.Pool.GetNew();
+                            pair.Entity1 = swapper.Body;
+                            pair.Entity2 = keyelement.Body;
+                            fullOverlaps.Remove(pair);
+                        }
                     }
 
                     axis[i + 1] = swapper;
@@ -305,9 +332,12 @@ namespace TrueSync.Physics3D {
         {
             bodyList.Add(body);
 
-            axis1.Add(new SweepPoint(body, true, 0)); axis1.Add(new SweepPoint(body, false, 0));
-            axis2.Add(new SweepPoint(body, true, 1)); axis2.Add(new SweepPoint(body, false, 1));
-            axis3.Add(new SweepPoint(body, true, 2)); axis3.Add(new SweepPoint(body, false, 2));
+            axis1.Add(new SweepPoint(body, true, 0));
+            axis1.Add(new SweepPoint(body, false, 0));
+            axis2.Add(new SweepPoint(body, true, 1));
+            axis2.Add(new SweepPoint(body, false, 1));
+            axis3.Add(new SweepPoint(body, true, 2));
+            axis3.Add(new SweepPoint(body, false, 2));
 
             addCounter++;
         }
@@ -318,19 +348,55 @@ namespace TrueSync.Physics3D {
             int count;
 
             count = 0;
-            for (int i = 0; i < axis1.Count; i++)
-            { if (axis1[i].Body == body) { count++; axis1.RemoveAt(i); if (count == 2) break; i--; } }
+            for (int i = 0, length = axis1.Count; i < length; i++)
+            {
+                if (axis1[i].Body == body)
+                {
+                    count++;
+                    axis1.RemoveAt(i);
+                    if (count == 2)
+                        break;
+                    i--;
+                }
+            }
 
             count = 0;
-            for (int i = 0; i < axis2.Count; i++)
-            { if (axis2[i].Body == body) { count++; axis2.RemoveAt(i); if (count == 2) break; i--; } }
+            for (int i = 0, length = axis2.Count; i < length; i++)
+            {
+                if (axis2[i].Body == body)
+                {
+                    count++;
+                    axis2.RemoveAt(i);
+                    if (count == 2)
+                        break;
+                    i--;
+                }
+            }
 
             count = 0;
-            for (int i = 0; i < axis3.Count; i++)
-            { if (axis3[i].Body == body) { count++; axis3.RemoveAt(i); if (count == 2) break; i--; } }
+            for (int i = 0, length = axis3.Count; i < length; i++)
+            {
+                if (axis3[i].Body == body)
+                {
+                    count++;
+                    axis3.RemoveAt(i);
+                    if (count == 2)
+                        break;
+                    i--;
+                }
+            }
 
-            foreach (var pair in fullOverlaps) if (pair.Entity1 == body || pair.Entity2 == body) deprecated.Push(pair);
-            while (deprecated.Count > 0) fullOverlaps.Remove(deprecated.Pop());
+            foreach (var pair in fullOverlaps)
+            {
+                if (pair.Entity1 == body || pair.Entity2 == body)
+                    deprecated.Push(pair);
+            }
+            while (deprecated.Count > 0)
+            {
+                OverlapPair pair = deprecated.Pop();
+                fullOverlaps.Remove(pair);
+                OverlapPair.Pool.GiveBack(pair);
+            }
 
             bodyList.Remove(body);
 
@@ -346,10 +412,12 @@ namespace TrueSync.Physics3D {
         /// </summary>
         public override void Detect()
         {
-			
-
             if (addCounter > AddedObjectsBruteForceIsUsed)
             {
+                for (int i = 0, length = fullOverlaps.Count; i < length; i++)
+                {
+                    OverlapPair.Pool.GiveBack(fullOverlaps[i]);
+                }
                 fullOverlaps.Clear();
 
                 DirtySortAxis(axis1);

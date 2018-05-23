@@ -348,6 +348,7 @@ namespace TrueSync.Physics3D {
                         }
                         BoxSpherePair.pool.GiveBack(boxSpherePair);
                         break;
+
                     case ShapeType.Capusle | ShapeType.Capusle:
                         CapsuleCapsulePair capsuleCapsulePair = CapsuleCapsulePair.pool.GetNew();
                         capsuleCapsulePair.Shape1 = body1.Shape;
@@ -359,6 +360,30 @@ namespace TrueSync.Physics3D {
                             RaiseCollisionDetected(body1, body2, ref point1, ref point2, ref normal, penetration);
                         }
                         CapsuleCapsulePair.pool.GiveBack(capsuleCapsulePair);
+                        break;
+
+                    case ShapeType.Capusle | ShapeType.Sphere:
+                        CapsuleSpherePair capsuleSpherePair = CapsuleSpherePair.pool.GetNew();
+
+                        if (body1.Shape is CapsuleShape)
+                        {
+                            b1 = body1;
+                            b2 = body2;
+                        }
+                        else
+                        {
+                            b1 = body2;
+                            b2 = body1;
+                        }
+                        capsuleSpherePair.Shape1 = b1.Shape;
+                        capsuleSpherePair.Shape2 = b2.Shape;
+
+                        if (capsuleSpherePair.IsColliding(ref b1.orientation, ref b2.orientation, ref b1.position, ref b2.position,
+                            out point, out point1, out point2, out normal, out penetration))
+                        {
+                            RaiseCollisionDetected(b1, b2, ref point1, ref point2, ref normal, penetration);
+                        }
+                        CapsuleSpherePair.pool.GiveBack(capsuleSpherePair);
                         break;
                     case ShapeType.Box | ShapeType.Box:
                         //BoxBoxPair boxBoxPair = BoxBoxPair.pool.GetNew();

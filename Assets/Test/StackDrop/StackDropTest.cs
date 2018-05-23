@@ -40,7 +40,7 @@ public class StackDropTest : TrueSyncBehaviour
             {
                 for (int k = 0; k < zSize; k++)
                 {
-                    GameObject tObj = TrueSyncManager.SyncedInstantiate(cube, new TSVector(
+                    GameObject tObj = TrueSyncManager.SyncedInstantiate((i+j+k)%2 == 0? sphere : capsule, new TSVector(
                         (i - 1) * (boxWidth + xGap),
                         (j - 1) * (boxWidth + yGap),
                         (k - 1) * (boxWidth + zGap)), TSQuaternion.AngleAxis(0, TSVector.forward));

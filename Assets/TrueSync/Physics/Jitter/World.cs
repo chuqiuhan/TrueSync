@@ -567,7 +567,7 @@ namespace TrueSync.Physics3D
             CheckDeactivation();
 
             IntegrateForces();
-            HandleArbiter(contactIterations);
+            HandleArbiter();
             Integrate();
 
             foreach (RigidBody body in rigidBodies) body.PostStep(timestep);
@@ -609,7 +609,7 @@ namespace TrueSync.Physics3D
 
             IntegrateForces();
 
-            HandleArbiter(contactIterations);
+            HandleArbiter();
 
             Integrate();
 
@@ -743,8 +743,14 @@ namespace TrueSync.Physics3D
             CollisionIsland island = obj as CollisionIsland;
 
             int thisIterations;
-            if (island.Bodies.Count + island.Constraints.Count > 3) thisIterations = contactIterations;
-            else thisIterations = smallIterations;
+            if (island.Bodies.Count + island.Constraints.Count > 3)
+            {
+                thisIterations = contactIterations;
+            }
+            else
+            {
+                thisIterations = smallIterations;
+            }
 
             for (int i = -1; i < thisIterations; i++)
             {
@@ -775,11 +781,13 @@ namespace TrueSync.Physics3D
         }
         #endregion
 
-        private void HandleArbiter(int iterations)
+        private void HandleArbiter()
         {
-            for (int i = 0; i < islands.Count; i++)
+            for (int i = 0, length = islands.Count; i < length; i++)
             {
-                if (islands[i].IsActive()) arbiterCallback(islands[i]);
+                CollisionIsland island = islands[i];
+                if (island.IsActive())
+                    arbiterCallback(island);
             }
         }
 

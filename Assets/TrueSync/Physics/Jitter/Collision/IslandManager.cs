@@ -170,9 +170,11 @@ namespace TrueSync.Physics3D {
                     body2.island.bodies.Add(body2);
                     islands.Add(newIsland);
                 }
-            } else if (body2 == null || body2.IsStaticNonKinematic) // <- only body2 is static
-              {
-                if (body1 != null && body1.island == null) {
+            }
+            else if (body2 == null || body2.IsStaticNonKinematic) // <- only body2 is static
+            {
+                if (body1 != null && body1.island == null)
+                {
                     CollisionIsland newIsland = Pool.GetNew();
                     newIsland.islandManager = this;
 
@@ -180,8 +182,9 @@ namespace TrueSync.Physics3D {
                     body1.island.bodies.Add(body1);
                     islands.Add(newIsland);
                 }
-            } else if (body1 != null && body2 != null) // both are !static
-              {
+            }
+            else if (body1 != null && body2 != null) // both are !static
+            {
                 MergeIslands(body1, body2);
 
                 body1.connections.Add(body2);
@@ -251,7 +254,7 @@ namespace TrueSync.Physics3D {
                 RigidBody currentNode = leftSearchQueue.Dequeue();
                 if (!currentNode.IsStaticNonKinematic)
                 {
-                    for (int i = 0; i < currentNode.connections.Count; i++)
+                    for (int i = 0, length = currentNode.connections.Count; i < length; i++)
                     {
                         RigidBody connectedNode = currentNode.connections[i];
 
@@ -274,7 +277,7 @@ namespace TrueSync.Physics3D {
                 if (!currentNode.IsStaticNonKinematic)
                 {
 
-                    for (int i = 0; i < currentNode.connections.Count; i++)
+                    for (int i = 0, length = currentNode.connections.Count; i < length; i++)
                     {
                         RigidBody connectedNode = currentNode.connections[i];
 
@@ -301,7 +304,7 @@ namespace TrueSync.Physics3D {
 
             if (leftSearchQueue.Count == 0)
             {
-                for (int i = 0; i < visitedBodiesLeft.Count; i++)
+                for (int i = 0, length = visitedBodiesLeft.Count; i < length ; i++)
                 {
                     RigidBody body = visitedBodiesLeft[i];
                     body1.island.bodies.Remove(body);
@@ -319,7 +322,7 @@ namespace TrueSync.Physics3D {
             }
             else if (rightSearchQueue.Count == 0)
             {
-                for (int i = 0; i < visitedBodiesRight.Count; i++)
+                for (int i = 0, length = visitedBodiesRight.Count; i < length; i++)
                 {
                     RigidBody body = visitedBodiesRight[i];
                     body0.island.bodies.Remove(body);
@@ -338,12 +341,12 @@ namespace TrueSync.Physics3D {
 
         ResetSearchStates:
 
-            for (int i = 0; i < visitedBodiesLeft.Count; i++)
+            for (int i = 0, length = visitedBodiesLeft.Count; i < length; i++)
             {
                 visitedBodiesLeft[i].marker = 0;
             }
 
-            for (int i = 0; i < visitedBodiesRight.Count; i++)
+            for (int i = 0, length = visitedBodiesRight.Count; i < length; i++)
             {
                 visitedBodiesRight[i].marker = 0;
             }

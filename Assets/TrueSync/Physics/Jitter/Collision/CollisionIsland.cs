@@ -93,7 +93,8 @@ namespace TrueSync.Physics3D {
             foreach (RigidBody body in bodies)
             {
                 body.IsActive = active;
-                if (active && !body.IsActive) body.inactiveTime = FP.Zero;
+                if (active && !body.IsActive)
+                    body.inactiveTime = FP.Zero;
             }
 
         }

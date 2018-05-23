@@ -3,8 +3,8 @@
     /**
     * @brief A generic shape clone.
     **/
-    public class GenericShapeClone {
-
+    public class GenericShapeClone : ResourcePoolItem
+    {
         public TSMatrix inertia;
         public FP mass;
 
@@ -103,6 +103,10 @@
             sh.length = this.fp2;
         }
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
 
 }

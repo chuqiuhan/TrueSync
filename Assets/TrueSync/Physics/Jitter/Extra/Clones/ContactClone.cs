@@ -1,6 +1,7 @@
 ﻿namespace TrueSync.Physics3D {
 
-    public class ContactClone {
+    public class ContactClone : ResourcePoolItem
+    {
 		
         public ContactSettings settings;
 
@@ -103,6 +104,10 @@
 			contact.lastTimeStep = lastTimeStep;
 		}
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
 
 }

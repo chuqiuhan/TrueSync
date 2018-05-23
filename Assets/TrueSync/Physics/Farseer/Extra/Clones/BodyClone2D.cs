@@ -2,8 +2,8 @@
 
 namespace TrueSync.Physics2D {
 
-    internal class BodyClone2D {
-
+    internal class BodyClone2D : ResourcePoolItem
+    {
         private static ResourcePoolShapeClone2D poolClone2D = new ResourcePoolShapeClone2D();
 
         public FP _angularDamping;
@@ -162,6 +162,10 @@ namespace TrueSync.Physics2D {
             }
         }
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
 
 }

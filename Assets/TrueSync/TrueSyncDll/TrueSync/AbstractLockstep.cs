@@ -697,7 +697,7 @@ namespace TrueSync
             if (flag)
             {
                 byte[] data = content as byte[];
-                List<SyncedData> list = SyncedData.Decode(data);
+                ResourcePoolItemList<SyncedData> list = SyncedData.Decode(data);
                 bool flag2 = list.Count > 0;
                 if (flag2)
                 {

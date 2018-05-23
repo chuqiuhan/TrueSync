@@ -2,7 +2,8 @@
 
 namespace TrueSync.Physics3D {
     
-    public class CollisionIslandClone {
+    public class CollisionIslandClone : ResourcePoolItem
+    {
 
 		public List<RigidBody> bodies = new List<RigidBody>();
 		public List<ArbiterClone> arbiters = new List<ArbiterClone>();
@@ -67,6 +68,10 @@ namespace TrueSync.Physics3D {
             }
 		}
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
 
 }

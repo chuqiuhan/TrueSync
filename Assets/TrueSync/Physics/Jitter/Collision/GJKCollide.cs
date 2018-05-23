@@ -390,7 +390,7 @@ namespace TrueSync.Physics3D {
     /// VoronoiSimplexSolver is an implementation of the closest point distance
     /// algorithm from a 1-4 points simplex to the origin.
     /// Can be used with GJK, as an alternative to Johnson distance algorithm. 
-    public class VoronoiSimplexSolver {
+    public class VoronoiSimplexSolver : ResourcePoolItem {
         private const int VertexA = 0, VertexB = 1, VertexC = 2, VertexD = 3;
 
         private const int VoronoiSimplexMaxVerts = 5;
@@ -886,6 +886,11 @@ namespace TrueSync.Physics3D {
             }
 
             return true;
+        }
+
+        public void CleanUp()
+        {
+            Reset();
         }
     }
 

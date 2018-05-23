@@ -49,7 +49,7 @@ namespace TrueSync.Physics3D {
 
     /// <summary>
     /// </summary>
-    public class Contact : IConstraint
+    public class Contact : IConstraint, ResourcePoolItem
     {
         public ContactSettings settings;
 
@@ -88,8 +88,7 @@ namespace TrueSync.Physics3D {
         /// <summary>
         /// A contact resource pool.
         /// </summary>
-        public static readonly ResourcePool<Contact> Pool =
-            new ResourcePool<Contact>();
+        public static readonly ResourcePool<Contact> Pool = new ResourcePool<Contact>();
 
 		public FP lastTimeStep = FP.PositiveInfinity;
 
@@ -618,6 +617,11 @@ namespace TrueSync.Physics3D {
             }
 
             this.settings = settings;
+        }
+
+        public void CleanUp()
+        {
+            //TODO:
         }
     }
 }

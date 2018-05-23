@@ -29,7 +29,7 @@ namespace TrueSync.Physics2D
     /// <summary>
     /// A node in the dynamic tree. The client does not interact with this directly.
     /// </summary>
-    internal class TreeNode<T>
+    internal class TreeNode<T> : ResourcePoolItem
     {
         /// <summary>
         /// Enlarged AABB
@@ -46,6 +46,11 @@ namespace TrueSync.Physics2D
         internal bool IsLeaf()
         {
             return Child1 == DynamicTree<T>.NullNode;
+        }
+
+        public void CleanUp()
+        {
+            //TODO:
         }
     }
 

@@ -3,8 +3,8 @@
     /**
     * @brief A generic 2D shape clone.
     **/
-    public class GenericShapeClone2D {
-
+    public class GenericShapeClone2D : ResourcePoolItem
+    {
         private FP _density;
         private FP _radius;
         private FP _2radius;
@@ -16,29 +16,40 @@
         private Vertices _vertices;
         private Vertices _normals;
 
-        public void Clone(Shape sh) {
+        public void Clone(Shape sh)
+        {
             this._density = sh._density;
             this._radius = sh._radius;
             this._2radius = sh._2radius;
             this.massData = sh.MassData;
 
-            if (sh is PolygonShape) {
+            if (sh is PolygonShape)
+            {
                 ClonePolygon((PolygonShape)sh);
-            } else if (sh is CircleShape) {
+            }
+            else if (sh is CircleShape)
+            {
                 CloneCircle((CircleShape)sh);
             }
         }
 
-        private void ClonePolygon(PolygonShape sh) {
-            if (this._vertices == null) {
+        private void ClonePolygon(PolygonShape sh)
+        {
+            if (this._vertices == null)
+            {
                 this._vertices = new Vertices();
-            } else {
+            }
+            else
+            {
                 this._vertices.Clear();
             }
 
-            if (this._normals == null) {
+            if (this._normals == null)
+            {
                 this._normals = new Vertices();
-            } else {
+            }
+            else
+            {
                 this._normals.Clear();
             }
 
@@ -46,24 +57,30 @@
             this._normals.AddRange(sh._normals);
         }
 
-        private void CloneCircle(CircleShape sh) {
+        private void CloneCircle(CircleShape sh)
+        {
             this._position = sh._position;
         }
 
-        public void Restore(Shape sh) {
+        public void Restore(Shape sh)
+        {
             sh._density = this._density;
             sh._radius = this._radius;
             sh._2radius = this._2radius;
             sh.MassData = this.massData;
 
-            if (sh is PolygonShape) {
+            if (sh is PolygonShape)
+            {
                 RestorePolygon((PolygonShape)sh);
-            } else if (sh is CircleShape) {
+            }
+            else if (sh is CircleShape)
+            {
                 RestoreCircle((CircleShape)sh);
             }
         }
 
-        private void RestorePolygon(PolygonShape sh) {
+        private void RestorePolygon(PolygonShape sh)
+        {
             sh._vertices.Clear();
             sh._vertices.AddRange(this._vertices);
 
@@ -71,10 +88,13 @@
             sh._normals.AddRange(this._normals);
         }
 
-        private void RestoreCircle(CircleShape sh) {
+        private void RestoreCircle(CircleShape sh)
+        {
             sh._position = this._position;
         }
 
+        public void CleanUp()
+        {
+        }
     }
-
 }

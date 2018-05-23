@@ -34,8 +34,8 @@ namespace TrueSync
 		public abstract void ResetResourcePool();
 	}
 
-	public class ResourcePool<T> : ResourcePool
-	{
+	public class ResourcePool<T> : ResourcePool where T : ResourcePoolItem
+    {
 		protected Stack<T> stack = new Stack<T>(10);
 
         public int Count
@@ -82,6 +82,22 @@ namespace TrueSync
         protected virtual T NewInstance()
         {
             return New<T>.Instance();
+        }
+    }
+
+    public class ResourcePoolItemList<T> : List<T>, ResourcePoolItem
+    {
+        public void CleanUp()
+        {
+            this.Clear();
+        }
+    }
+
+    public class ResourcePoolItemStack<T> : Stack<T>, ResourcePoolItem
+    {
+        public void CleanUp()
+        {
+            this.Clear();
         }
     }
 }

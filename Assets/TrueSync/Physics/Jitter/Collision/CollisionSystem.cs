@@ -81,7 +81,7 @@ namespace TrueSync.Physics3D {
     /// <returns>If false is returned the collision information is dropped.</returns>
     public delegate bool RaycastCallback(RigidBody body,TSVector normal, FP fraction);
 
-    public abstract class CollisionPair
+    public abstract class CollisionPair : ResourcePoolItem
     {
         /// <summary>
         /// The first body.
@@ -103,6 +103,12 @@ namespace TrueSync.Physics3D {
         /// <returns></returns>
         public abstract bool IsColliding(ref TSMatrix orientation1, ref TSMatrix orientation2, ref TSVector position1, ref TSVector position2,
             out TSVector point, out TSVector point1, out TSVector point2, out TSVector normal, out FP penetration);
+
+        public virtual void CleanUp()
+        {
+            this.Shape1 = null;
+            this.Shape2 = null;
+        }
     }
 
     /// <summary>
@@ -118,7 +124,7 @@ namespace TrueSync.Physics3D {
         /// the object parameter to ThreadManager.Instance.AddTask)
         /// </summary>
         #region protected class BroadphasePair
-        protected class BroadphasePair
+        protected class BroadphasePair : ResourcePoolItem
         {
             /// <summary>
             /// The first body.
@@ -133,6 +139,12 @@ namespace TrueSync.Physics3D {
             /// A resource pool of Pairs.
             /// </summary>
             public static ResourcePool<BroadphasePair> Pool = new ResourcePool<BroadphasePair>();
+
+            public void CleanUp()
+            {
+                this.Entity1 = null;
+                this.Entity2 = null;
+            }
         }
         #endregion
 
@@ -244,12 +256,12 @@ namespace TrueSync.Physics3D {
             }
         }
 
-        private ResourcePool<List<int>> potentialTriangleLists = new ResourcePool<List<int>>();
+        private ResourcePool<ResourcePoolItemList<int>> potentialTriangleLists = new ResourcePool<ResourcePoolItemList<int>>();
 
         private void DetectSoftSoft(SoftBody body1, SoftBody body2)
         {
-            List<int> my = potentialTriangleLists.GetNew();
-            List<int> other = potentialTriangleLists.GetNew();
+            ResourcePoolItemList<int> my = potentialTriangleLists.GetNew();
+            ResourcePoolItemList<int> other = potentialTriangleLists.GetNew();
 
             body1.dynamicTree.Query(other, my, body2.dynamicTree);
 
@@ -276,7 +288,8 @@ namespace TrueSync.Physics3D {
                 }
             }
 
-            my.Clear(); other.Clear();
+            my.Clear();
+            other.Clear();
             potentialTriangleLists.GiveBack(my);
             potentialTriangleLists.GiveBack(other);
         }
@@ -563,7 +576,7 @@ namespace TrueSync.Physics3D {
 
                 int msLength = ms.Prepare(ref transformedBoundingBox);
 
-                List<int> detected = potentialTriangleLists.GetNew();
+                ResourcePoolItemList<int> detected = potentialTriangleLists.GetNew();
                 softBody.dynamicTree.Query(detected, ref rigidBody.boundingBox);
 
                 foreach (int i in detected)
@@ -597,7 +610,7 @@ namespace TrueSync.Physics3D {
             }
             else
             {
-                List<int> detected = potentialTriangleLists.GetNew();
+                ResourcePoolItemList<int> detected = potentialTriangleLists.GetNew();
                 softBody.dynamicTree.Query(detected, ref rigidBody.boundingBox);
 
                 foreach (int i in detected)

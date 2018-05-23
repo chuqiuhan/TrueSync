@@ -6,7 +6,7 @@ namespace TrueSync
 {
 	public class StateTracker
     {
-        internal class State
+        internal class State : ResourcePoolItem
 		{
 			private StateTracker.TrackedInfo trackedInfo;
 
@@ -64,6 +64,11 @@ namespace TrueSync
 					}
 				}
 			}
+
+            public void CleanUp()
+            {
+                //TODO:
+            }
 		}
 
         internal class TrackedInfo

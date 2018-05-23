@@ -62,8 +62,8 @@ namespace TrueSync.Physics3D {
 	#endregion
 
 	#region private struct OverlapPair
-	public class OverlapPair : IComparable
-	{
+	public class OverlapPair : IComparable, ResourcePoolItem
+    {
 		// internal values for faster access within the engine
 		public IBroadphaseEntity Entity1, Entity2;
 
@@ -125,7 +125,6 @@ namespace TrueSync.Physics3D {
 				long a = ((OverlapPair)obj).GetHashCode ();
 				long b = GetHashCode ();
 
-				//int diff = ((OverlapPair)obj).GetHashCode () - GetHashCode ();
 				long diff = a - b;
 				if (diff < 0) {
 					return 1;
@@ -136,6 +135,12 @@ namespace TrueSync.Physics3D {
 
 			return 0;
 		}
+
+        public void CleanUp()
+        {
+            this.Entity1 = null;
+            this.Entity2 = null;
+        }
 	}
     #endregion
 

@@ -54,9 +54,9 @@ namespace TrueSync
 			this.inputData.Serialize(bytes);
 		}
 
-		public static List<SyncedData> Decode(byte[] data)
+		public static ResourcePoolItemList<SyncedData> Decode(byte[] data)
 		{
-			List<SyncedData> @new = SyncedData.poolList.GetNew();
+            ResourcePoolItemList<SyncedData> @new = SyncedData.poolList.GetNew();
 			@new.Clear();
 			int i = 0;
 			int num = BitConverter.ToInt32(data, i);

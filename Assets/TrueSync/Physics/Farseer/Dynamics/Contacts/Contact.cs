@@ -34,7 +34,7 @@ namespace TrueSync.Physics2D
     /// maintained in each attached body. Each contact has two contact
     /// nodes, one for each attached body.
     /// </summary>
-    public sealed class ContactEdge
+    public sealed class ContactEdge : ResourcePoolItem
     {
         /// <summary>
         /// The contact
@@ -55,6 +55,14 @@ namespace TrueSync.Physics2D
         /// The previous contact edge in the body's contact list
         /// </summary>
         public ContactEdge Prev;
+
+        public void CleanUp()
+        {
+            this.Contact = null;
+            this.Next = null;
+            this.Other = null;
+            this.Prev = null;
+        }
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿namespace TrueSync.Physics3D {
     
-    public class SweetPointClone {
-
+    public class SweetPointClone : ResourcePoolItem
+    {
 		public IBroadphaseEntity body;
 		public bool begin;
 		public int axis;
@@ -18,6 +18,12 @@
 			sp.Axis = axis;
 		}
 
-	}
+        public void CleanUp()
+        {
+            this.body = null;
+            this.begin = false;
+            this.axis = -1;
+        }
+    }
 
 }

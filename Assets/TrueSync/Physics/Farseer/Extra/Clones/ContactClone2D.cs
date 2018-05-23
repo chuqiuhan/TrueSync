@@ -1,6 +1,7 @@
 ﻿namespace TrueSync.Physics2D {
  
-    internal class ContactClone2D {
+    internal class ContactClone2D : ResourcePoolItem
+    {
 
         public Contact.ContactType _type;
 
@@ -97,6 +98,10 @@
             contact.Manifold.Type = this.Manifold.Type;
         }
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
 
 }

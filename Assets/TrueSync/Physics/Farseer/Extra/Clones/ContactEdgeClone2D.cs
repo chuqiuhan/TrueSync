@@ -2,8 +2,8 @@
 
 namespace TrueSync.Physics2D {
 
-    internal class ContactEdgeClone2D {
-
+    internal class ContactEdgeClone2D : ResourcePoolItem
+    {
         public ContactCloneKey contactKey;
 
         public Body body;
@@ -61,6 +61,10 @@ namespace TrueSync.Physics2D {
             }
         }
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
 
 }

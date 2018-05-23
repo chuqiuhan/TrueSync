@@ -2,7 +2,8 @@
 
 namespace TrueSync.Physics3D {
 
-    public class ArbiterClone {
+    public class ArbiterClone : ResourcePoolItem
+    {
 
 		public static ResourcePoolContactClone poolContactClone = new ResourcePoolContactClone();
 
@@ -50,6 +51,9 @@ namespace TrueSync.Physics3D {
             }
         }
 
+        public void CleanUp()
+        {
+            //TODO:
+        }
     }
-
 }

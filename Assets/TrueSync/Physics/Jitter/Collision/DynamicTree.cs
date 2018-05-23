@@ -254,7 +254,7 @@ namespace TrueSync.Physics3D {
 
         public void Query(TSVector origin, TSVector direction, List<int> collisions)
         {
-            Stack<int> stack = stackPool.GetNew();
+            ResourcePoolItemStack<int> stack = stackPool.GetNew();
 
             stack.Push(_root);
 
@@ -279,8 +279,8 @@ namespace TrueSync.Physics3D {
 
         public void Query(List<int> other, List<int> my, DynamicTree<T> tree)
         {
-            Stack<int> stack1 = stackPool.GetNew();
-            Stack<int> stack2 = stackPool.GetNew();
+            ResourcePoolItemStack<int> stack1 = stackPool.GetNew();
+            ResourcePoolItemStack<int> stack2 = stackPool.GetNew();
 
             stack1.Push(_root);
             stack2.Push(tree._root);
@@ -340,7 +340,7 @@ namespace TrueSync.Physics3D {
         }
 
 
-        private ResourcePool<Stack<int>> stackPool = new ResourcePool<Stack<int>>();
+        private ResourcePool<ResourcePoolItemStack<int>> stackPool = new ResourcePool<ResourcePoolItemStack<int>>();
 
         /// <summary>
         /// Query an AABB for overlapping proxies. The callback class
@@ -351,7 +351,7 @@ namespace TrueSync.Physics3D {
         public void Query(List<int> my, ref TSBBox aabb)
         {
             //Stack<int> _stack = new Stack<int>(256);
-            Stack<int> _stack = stackPool.GetNew();
+            ResourcePoolItemStack<int> _stack = stackPool.GetNew();
 
             _stack.Push(_root);
 

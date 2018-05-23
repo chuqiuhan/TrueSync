@@ -2,7 +2,8 @@
 
 namespace TrueSync.Physics3D {
 
-    public class RigidBodyClone {
+    public class RigidBodyClone : ResourcePoolItem
+    {
 
         public static ResourcePoolGenericShapeClone poolGenericShapeClone = new ResourcePoolGenericShapeClone();
 
@@ -184,7 +185,11 @@ namespace TrueSync.Physics3D {
                 world.physicsManager.GetGameObject(rb).SetActive(true);
             }
         }
-			
+
+        public void CleanUp()
+        {
+            //TODO:
+        }
 	}
 
 }

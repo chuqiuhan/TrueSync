@@ -22,7 +22,11 @@ public class StackDropTest : TrueSyncBehaviour
     private FP boxWidth = 1;
 
     [SerializeField]
-    private GameObject obj;
+    private GameObject cube;
+    [SerializeField]
+    private GameObject sphere;
+    [SerializeField]
+    private GameObject capsule;
 
     private HashList<GameObject> objStack = new HashList<GameObject>();
 
@@ -36,10 +40,10 @@ public class StackDropTest : TrueSyncBehaviour
             {
                 for (int k = 0; k < zSize; k++)
                 {
-                    GameObject tObj = TrueSyncManager.SyncedInstantiate(obj, new TSVector(
+                    GameObject tObj = TrueSyncManager.SyncedInstantiate(cube, new TSVector(
                         (i - 1) * (boxWidth + xGap),
-                        (j - 1) * (boxWidth + yGap), 
-                        (k - 1) * (boxWidth + zGap)), TSQuaternion.identity);
+                        (j - 1) * (boxWidth + yGap),
+                        (k - 1) * (boxWidth + zGap)), TSQuaternion.AngleAxis(0, TSVector.forward));
                     TSMaterial tMaterial = tObj.AddComponent<TSMaterial>();
                     tMaterial.restitution = 0;
                     tMaterial.friction = 1;

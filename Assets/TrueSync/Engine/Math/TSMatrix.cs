@@ -521,6 +521,41 @@ namespace TrueSync
         #endregion
 
         /// <summary>
+        /// Transforms the vector by the matrix's transpose.
+        /// </summary>
+        /// <param name="v">Vector3 to transform.</param>
+        /// <param name="matrix">Matrix to use as the transformation transpose.</param>
+        /// <param name="result">Product of the transformation.</param>
+        public static void TransformTranspose(ref TSVector v, ref TSMatrix matrix, out TSVector result)
+        {
+            FP vX = v.x;
+            FP vY = v.y;
+            FP vZ = v.z;
+            result = TSVector.zero;
+            result.x = vX * matrix.M11 + vY * matrix.M12 + vZ * matrix.M13;
+            result.y = vX * matrix.M21 + vY * matrix.M22 + vZ * matrix.M23;
+            result.z = vX * matrix.M31 + vY * matrix.M32 + vZ * matrix.M33;
+        }
+
+        /// <summary>
+        /// Transforms the vector by the matrix's transpose.
+        /// </summary>
+        /// <param name="v">Vector3 to transform.</param>
+        /// <param name="matrix">Matrix to use as the transformation transpose.</param>
+        /// <returns>Product of the transformation.</returns>
+        public static TSVector TransformTranspose(TSVector v, TSMatrix matrix)
+        {
+            FP vX = v.x;
+            FP vY = v.y;
+            FP vZ = v.z;
+            TSVector result;
+            result.x = vX * matrix.M11 + vY * matrix.M12 + vZ * matrix.M13;
+            result.y = vX * matrix.M21 + vY * matrix.M22 + vZ * matrix.M23;
+            result.z = vX * matrix.M31 + vY * matrix.M32 + vZ * matrix.M33;
+            return result;
+        }
+
+        /// <summary>
         /// Creates the transposed matrix.
         /// </summary>
         /// <param name="matrix">The matrix which should be transposed.</param>
@@ -701,6 +736,189 @@ namespace TrueSync
             return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}", M11.RawValue, M12.RawValue, M13.RawValue, M21.RawValue, M22.RawValue, M23.RawValue, M31.RawValue, M32.RawValue, M33.RawValue);
         }
 
+        /// <summary>
+        /// Gets or sets the backward vector of the matrix.
+        /// </summary>
+        public TSVector Backward
+        {
+            get
+            {
+                TSVector vector;
+                vector.x = M31;
+                vector.y = M32;
+                vector.z = M33;
+                return vector;
+            }
+            set
+            {
+                M31 = value.x;
+                M32 = value.y;
+                M33 = value.z;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the down vector of the matrix.
+        /// </summary>
+        public TSVector Down
+        {
+            get
+            {
+                TSVector vector;
+                vector.x = -M21;
+                vector.y = -M22;
+                vector.z = -M23;
+                return vector;
+            }
+            set
+            {
+                M21 = -value.x;
+                M22 = -value.y;
+                M23 = -value.z;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the forward vector of the matrix.
+        /// </summary>
+        public TSVector Forward
+        {
+            get
+            {
+                TSVector vector;
+                vector.x = -M31;
+                vector.y = -M32;
+                vector.z = -M33;
+                return vector;
+            }
+            set
+            {
+                M31 = -value.x;
+                M32 = -value.y;
+                M33 = -value.z;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the left vector of the matrix.
+        /// </summary>
+        public TSVector Left
+        {
+            get
+            {
+                TSVector vector;
+                vector.x = -M11;
+                vector.y = -M12;
+                vector.z = -M13;
+                return vector;
+            }
+            set
+            {
+                M11 = -value.x;
+                M12 = -value.y;
+                M13 = -value.z;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the right vector of the matrix.
+        /// </summary>
+        public TSVector Right
+        {
+            get
+            {
+                TSVector vector;
+                vector.x = M11;
+                vector.y = M12;
+                vector.z = M13;
+                return vector;
+            }
+            set
+            {
+                M11 = value.x;
+                M12 = value.y;
+                M13 = value.z;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the up vector of the matrix.
+        /// </summary>
+        public TSVector Up
+        {
+            get
+            {
+                TSVector vector;
+                vector.x = M21;
+                vector.y = M22;
+                vector.z = M23;
+                return vector;
+            }
+            set
+            {
+                M21 = value.x;
+                M22 = value.y;
+                M23 = value.z;
+            }
+        }
+
+        /// <summary>
+        /// Creates a 4x4 matrix from a 3x3 matrix.
+        /// </summary>
+        /// <param name="a">3x3 matrix.</param>
+        /// <param name="b">Created 4x4 matrix.</param>
+        public static void ToMatrix4X4(ref TSMatrix a, out TSMatrix4x4 b)
+        {
+            b.M11 = a.M11;
+            b.M12 = a.M12;
+            b.M13 = a.M13;
+
+            b.M21 = a.M21;
+            b.M22 = a.M22;
+            b.M23 = a.M23;
+
+            b.M31 = a.M31;
+            b.M32 = a.M32;
+            b.M33 = a.M33;
+
+            b.M44 = FP.One;
+            b.M14 = FP.Zero;
+            b.M24 = FP.Zero;
+            b.M34 = FP.Zero;
+            b.M41 = FP.Zero;
+            b.M42 = FP.Zero;
+            b.M43 = FP.Zero;
+        }
+
+        /// <summary>
+        /// Creates a 4x4 matrix from a 3x3 matrix.
+        /// </summary>
+        /// <param name="a">3x3 matrix.</param>
+        /// <returns>Created 4x4 matrix.</returns>
+        public static TSMatrix4x4 ToMatrix4X4(TSMatrix a)
+        {
+            TSMatrix4x4 b;
+            b.M11 = a.M11;
+            b.M12 = a.M12;
+            b.M13 = a.M13;
+
+            b.M21 = a.M21;
+            b.M22 = a.M22;
+            b.M23 = a.M23;
+
+            b.M31 = a.M31;
+            b.M32 = a.M32;
+            b.M33 = a.M33;
+
+            b.M44 = FP.One;
+            b.M14 = FP.Zero;
+            b.M24 = FP.Zero;
+            b.M34 = FP.Zero;
+            b.M41 = FP.Zero;
+            b.M42 = FP.Zero;
+            b.M43 = FP.Zero;
+            return b;
+        }
     }
 
 }

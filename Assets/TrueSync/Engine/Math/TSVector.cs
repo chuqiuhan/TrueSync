@@ -318,9 +318,20 @@ namespace TrueSync
             return result;
         }
 		
-		public static FP Distance(TSVector v1, TSVector v2) {
-			return FP.Sqrt ((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y) + (v1.z - v2.z) * (v1.z - v2.z));
+		public static FP Distance(TSVector v1, TSVector v2)
+        {
+            FP result;
+            DistanceSquared(ref v1, ref v2, out result);
+            return TSMath.Sqrt(result);
 		}
+
+        public static void DistanceSquared(ref TSVector v1, ref TSVector v2, out FP result)
+        {
+            FP xDiff = (v1.x - v2.x);
+            FP yDiff = (v1.y - v2.y);
+            FP zDiff = (v1.z - v2.z);
+            result = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+        }
 
         /// <summary>
         /// Gets a vector with the maximum x,y and z values of both vectors.
@@ -390,13 +401,52 @@ namespace TrueSync
         /// <param name="result">The transformed vector.</param>
         public static void Transform(ref TSVector position, ref TSMatrix matrix, out TSVector result)
         {
-            FP num0 = ((position.x * matrix.M11) + (position.y * matrix.M21)) + (position.z * matrix.M31);
-            FP num1 = ((position.x * matrix.M12) + (position.y * matrix.M22)) + (position.z * matrix.M32);
-            FP num2 = ((position.x * matrix.M13) + (position.y * matrix.M23)) + (position.z * matrix.M33);
+            result.x = ((position.x * matrix.M11) + (position.y * matrix.M21)) + (position.z * matrix.M31);
+            result.y = ((position.x * matrix.M12) + (position.y * matrix.M22)) + (position.z * matrix.M32);
+            result.z = ((position.x * matrix.M13) + (position.y * matrix.M23)) + (position.z * matrix.M33);
+        }
 
-            result.x = num0;
-            result.y = num1;
-            result.z = num2;
+        /// <summary>
+        /// Transforms a vector using a matrix.
+        /// </summary>
+        /// <param name="v">Vector to transform.</param>
+        /// <param name="matrix">Transform to apply to the vector.</param>
+        /// <param name="result">Transformed vector.</param>
+        public static void Transform(ref TSVector v, ref TSMatrix4x4 matrix, out TSVector4 result)
+        {
+            result.x = v.x * matrix.M11 + v.y * matrix.M21 + v.z * matrix.M31 + matrix.M41;
+            result.y = v.x * matrix.M12 + v.y * matrix.M22 + v.z * matrix.M32 + matrix.M42;
+            result.z = v.x * matrix.M13 + v.y * matrix.M23 + v.z * matrix.M33 + matrix.M43;
+            result.w = v.x * matrix.M14 + v.y * matrix.M24 + v.z * matrix.M34 + matrix.M44;
+        }
+
+        /// <summary>
+        /// Transforms a vector using a matrix.
+        /// </summary>
+        /// <param name="v">Vector to transform.</param>
+        /// <param name="matrix">Transform to apply to the vector.</param>
+        /// <returns>Transformed vector.</returns>
+        public static TSVector4 Transform4x4(TSVector v, TSMatrix4x4 matrix)
+        {
+            TSVector4 toReturn;
+            Transform(ref v, ref matrix, out toReturn);
+            return toReturn;
+        }
+
+        /// <summary>
+        /// Transforms a vector using a matrix.
+        /// </summary>
+        /// <param name="v">Vector to transform.</param>
+        /// <param name="matrix">Transform to apply to the vector.</param>
+        /// <param name="result">Transformed vector.</param>
+        public static void Transform(ref TSVector v, ref TSMatrix4x4 matrix, out TSVector result)
+        {
+            FP vX = v.x;
+            FP vY = v.y;
+            FP vZ = v.z;
+            result.x = vX * matrix.M11 + vY * matrix.M21 + vZ * matrix.M31 + matrix.M41;
+            result.y = vX * matrix.M12 + vY * matrix.M22 + vZ * matrix.M32 + matrix.M42;
+            result.z = vX * matrix.M13 + vY * matrix.M23 + vZ * matrix.M33 + matrix.M43;
         }
 
         /// <summary>
@@ -438,7 +488,12 @@ namespace TrueSync
         /// <returns>Returns the dot product of both vectors.</returns>
         public static FP Dot(ref TSVector vector1, ref TSVector vector2)
         {
-            return ((vector1.x * vector2.x) + (vector1.y * vector2.y)) + (vector1.z * vector2.z);
+            return (vector1.x * vector2.x) + (vector1.y * vector2.y) + (vector1.z * vector2.z);
+        }
+
+        public static void Dot(ref TSVector vector1, ref TSVector vector2, out FP result)
+        {
+            result = (vector1.x * vector2.x) + (vector1.y * vector2.y) + (vector1.z * vector2.z);
         }
         #endregion
 

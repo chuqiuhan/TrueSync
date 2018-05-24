@@ -81,7 +81,11 @@ namespace TrueSync
 
         protected virtual T NewInstance()
         {
+#if UNITY_IOS
+            return Activator.CreateInstance<T>(); //slow, but iOS doesn't support System.Reflection.Emit which was used in System.Linq.Expressions.
+#else
             return New<T>.Instance();
+#endif
         }
     }
 

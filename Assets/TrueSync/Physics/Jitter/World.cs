@@ -844,29 +844,33 @@ namespace TrueSync.Physics3D
                 //exponential map
                 TSVector axis;
                 FP angle = body.angularVelocity.magnitude;
-
+                FP halfTimeStep = FP.Half * timestep;
+                FP halfTimeStepAngle = halfTimeStep * angle;
                 if (angle < FP.EN3)
                 {
                     // use Taylor's expansions of sync function
                     // axis = body.angularVelocity * (FP.Half * timestep - (timestep * timestep * timestep) * (0.020833333333f) * angle * angle);
-					TSVector.Multiply(ref body.angularVelocity, (FP.Half * timestep - (timestep * timestep * timestep) * (2082 * FP.EN6) * angle * angle), out axis);
+                    //TSVector.Multiply(ref body.angularVelocity, (halfTimeStep - (timestep * timestep * timestep) * (2082 * FP.EN6) * angle * angle), out axis);
+                    TSVector.Multiply(ref body.angularVelocity, halfTimeStep, out axis);
                 }
                 else
                 {
                     // sync(fAngle) = sin(c*fAngle)/t
-                    TSVector.Multiply(ref body.angularVelocity, (FP.Sin(FP.Half * angle * timestep) / angle), out axis);
+                    TSVector.Multiply(ref body.angularVelocity, (FP.Sin(halfTimeStepAngle) / angle), out axis);
                 }
 
-                TSQuaternion dorn = new TSQuaternion(axis.x, axis.y, axis.z, FP.Cos(angle * timestep * FP.Half));
-                TSQuaternion ornA; TSQuaternion.CreateFromMatrix(ref body.orientation, out ornA);
+                TSQuaternion dorn = new TSQuaternion(axis.x, axis.y, axis.z, FP.Cos(halfTimeStepAngle));
+                TSQuaternion ornA;
+                TSQuaternion.CreateFromMatrix(ref body.orientation, out ornA);
 
                 TSQuaternion.Multiply(ref dorn, ref ornA, out dorn);
 
-                dorn.Normalize(); TSMatrix.CreateFromQuaternion(ref dorn, out body.orientation);
+                dorn.Normalize();
+                TSMatrix.CreateFromQuaternion(ref dorn, out body.orientation);
             }
 
-            body.linearVelocity *= 1 / (1 + timestep * body.linearDrag);
-            body.angularVelocity *= 1 / (1 + timestep * body.angularDrag);
+            body.linearVelocity  /= (1 + timestep * body.linearDrag);
+            body.angularVelocity /= (1 + timestep * body.angularDrag);
 
             /*if ((body.Damping & RigidBody.DampingType.Linear) != 0)
                 TSVector.Multiply(ref body.linearVelocity, currentLinearDampFactor, out body.linearVelocity);

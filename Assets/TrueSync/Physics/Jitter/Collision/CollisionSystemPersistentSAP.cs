@@ -408,8 +408,6 @@ namespace TrueSync.Physics3D {
             return true;
         }
 
-        public bool swapOrder = false;
-
         /// <summary>
         /// Tells the collisionsystem to check all bodies for collisions. Hook into the
         /// <see cref="CollisionSystem.PassedBroadphase"/>
@@ -445,10 +443,7 @@ namespace TrueSync.Physics3D {
 
                 if (base.RaisePassedBroadphase(key.Entity1, key.Entity2))
                 {
-                    if (swapOrder) { Detect(key.Entity1, key.Entity2); }
-                    else Detect(key.Entity2, key.Entity1);
-
-                    swapOrder = !swapOrder;
+                    Detect(key.Entity1, key.Entity2);
                 }
             }
         }

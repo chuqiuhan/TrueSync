@@ -16,8 +16,6 @@ namespace TrueSync.Physics3D {
 
 		public List<IBroadphaseEntity> activeList = new List<IBroadphaseEntity>();
 
-		public bool swapOrder;
-
         private int index, length;
 
         public void Reset() {
@@ -71,8 +69,6 @@ namespace TrueSync.Physics3D {
             for (index = 0, length = cs.activeList.Count; index < length; index++) {
                 activeList.Add (cs.activeList[index]);
             }
-
-			swapOrder = cs.swapOrder;
 		}
 
 		public void Restore(CollisionSystemPersistentSAP cs) {
@@ -111,8 +107,6 @@ namespace TrueSync.Physics3D {
 				
 			cs.activeList.Clear ();
 			cs.activeList.AddRange (activeList);
-
-			cs.swapOrder = swapOrder;
 		}
 
 	}

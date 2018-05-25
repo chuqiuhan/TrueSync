@@ -84,18 +84,13 @@ namespace TrueSync.Physics3D {
                     {
                         if (RaisePassedBroadphase(bodyList[i], bodyList[e]))
                         {
-                            if (swapOrder) Detect(bodyList[i], bodyList[e]);
-                            else Detect(bodyList[e], bodyList[i]);
-                            swapOrder = !swapOrder;
+                            Detect(bodyList[i], bodyList[e]);
                         }
                     }
                 }
             }
         }
         #endregion
-
-
-        private bool swapOrder = false;
 
         private void DetectCallback(object obj)
         {

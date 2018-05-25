@@ -43,8 +43,6 @@ namespace TrueSync.Physics3D {
 
         private IBroadphaseEntityXCompare xComparer;
 
-        private bool swapOrder = false;
-
         /// <summary>
         /// Creates a new instance of the CollisionSystemSAP class.
         /// </summary>
@@ -122,9 +120,7 @@ namespace TrueSync.Physics3D {
                     {
                         if (base.RaisePassedBroadphase(ac, body))
                         {
-                            if (swapOrder) Detect(body, ac);
-                            else Detect(ac, body);
-                            swapOrder = !swapOrder;
+                            Detect(body, ac);
                         }
                     }
 

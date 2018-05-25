@@ -510,8 +510,16 @@ namespace TrueSync.Physics3D {
             {
                 RigidBody b1, b2;
 
-                if (body2.Shape is Multishape) { b1 = body2; b2 = body1; }
-                else { b2 = body2; b1 = body1; }
+                if (body2.Shape is Multishape)
+                {
+                    b1 = body2;
+                    b2 = body1;
+                }
+                else
+                {
+                    b2 = body2;
+                    b1 = body1;
+                }
 
                 Multishape ms = (b1.Shape as Multishape);
 
@@ -697,13 +705,17 @@ namespace TrueSync.Physics3D {
 
             if (length0 < length1)
             {
-                if (length0 < length2) return triangle.indices.I0;
-                else return triangle.indices.I2;
+                if (length0 < length2)
+                    return triangle.indices.I0;
+                else
+                    return triangle.indices.I2;
             }
             else
             {
-                if (length1 < length2) return triangle.indices.I1;
-                else return triangle.indices.I2;
+                if (length1 < length2)
+                    return triangle.indices.I1;
+                else
+                    return triangle.indices.I2;
             }
         }
 
@@ -712,10 +724,13 @@ namespace TrueSync.Physics3D {
             Shape shape1, Shape shape2, ref TSVector point, ref TSVector normal,
             out TSVector point1, out TSVector point2)
         {
-            TSVector mn; TSVector.Negate(ref normal, out mn);
+            TSVector mn;
+            TSVector.Negate(ref normal, out mn);
 
-            TSVector sA; SupportMapping(body1, shape1, ref mn, out sA);
-            TSVector sB; SupportMapping(body2, shape2, ref normal, out sB);
+            TSVector sA;
+            SupportMapping(body1, shape1, ref mn, out sA);
+            TSVector sB;
+            SupportMapping(body2, shape2, ref normal, out sB);
 
             TSVector.Subtract(ref sA, ref point, out sA);
             TSVector.Subtract(ref sB, ref point, out sB);
@@ -785,9 +800,15 @@ namespace TrueSync.Physics3D {
             TSBBox box1 = entity1.BoundingBox;
             TSBBox box2 = entity2.BoundingBox;
 
-            return ((((box1.max.z >= box2.min.z) && (box1.min.z <= box2.max.z)) &&
-                ((box1.max.y >= box2.min.y) && (box1.min.y <= box2.max.y))) &&
-                ((box1.max.x >= box2.min.x) && (box1.min.x <= box2.max.x)));
+            TSVector box1min = box1.min;
+            TSVector box1max = box1.max;
+
+            TSVector box2min = box2.min;
+            TSVector box2max = box2.max;
+
+            return ((((box1max.z >= box2min.z) && (box1min.z <= box2max.z)) &&
+                ((box1max.y >= box2min.y) && (box1min.y <= box2max.y))) &&
+                ((box1max.x >= box2min.x) && (box1min.x <= box2max.x)));
         }
 
         /// <summary>

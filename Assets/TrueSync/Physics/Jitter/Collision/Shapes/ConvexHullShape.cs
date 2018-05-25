@@ -65,7 +65,7 @@ namespace TrueSync.Physics3D {
             int maxIndex = 0;
             FP dotProduct;
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (int i = 0, length = vertices.Count; i < length; i++)
             {
                 dotProduct = TSVector.Dot(vertices[i], direction);
                 if (dotProduct > maxDotProduct)

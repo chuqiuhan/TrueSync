@@ -75,7 +75,7 @@ namespace TrueSync.Physics3D {
         {
             TSVector temp1, temp2 = TSVector.zero;
 
-            for (int i = 0; i < shapes.Count; i++)
+            for (int i = 0, length = shapes.Count; i < length; i++)
             {
                 shapes[i].SupportMapping(ref direction, out temp1);
                 TSVector.Add(ref temp1, ref temp2, out temp2);

@@ -274,17 +274,14 @@ namespace TrueSync.Physics3D {
 
             int minIndex = 0;
             FP min = TSVector.Dot(ref points[0], ref direction);
-            FP dot = TSVector.Dot(ref points[1], ref direction);
-            if (dot > min)
+            for (int i = 1, length = points.Length; i < length; i++)
             {
-                min = dot;
-                minIndex = 1;
-            }
-            dot = TSVector.Dot(ref points[2], ref direction);
-            if (dot > min)
-            {
-                min = dot;
-                minIndex = 2;
+                FP dot = TSVector.Dot(ref points[i], ref direction);
+                if (dot > min)
+                {
+                    min = dot;
+                    minIndex = i;
+                }
             }
 
             TSVector.Add(ref points[minIndex], ref expandVector, out result);
